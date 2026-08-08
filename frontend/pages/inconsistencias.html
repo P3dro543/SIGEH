@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inconsistencias – SIGEH</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/navbar.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+</head>
+<body>
+  <div class="layout-navbar">
+    <div id="navbar-container"></div>
+
+    <main class="page-body-navbar">
+      <div style="margin-bottom:1.25rem;">
+        <h1 class="page-title">Inconsistencias</h1>
+      </div>
+
+      <!-- Filtros -->
+      <div class="card" style="margin-bottom:1.25rem;">
+        <div class="card-body" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="flex:2;margin-bottom:0;">
+            <label class="form-label">Buscar</label>
+            <input
+              id="filtro-busqueda"
+              type="text"
+              class="form-input"
+              placeholder="Nombre, cédula, área..."
+              oninput="inconsistenciasModule.filtrar()"
+            />
+          </div>
+
+          <div class="form-group" style="flex:1;margin-bottom:0;">
+            <label class="form-label">Tipo</label>
+            <select
+              id="f-tipo"
+              class="form-select"
+              onchange="inconsistenciasModule.filtrar()"
+            >
+              <option value="">Todos</option>
+              <option value="tardanza">Tardanza</option>
+              <option value="ausencia">Ausencia</option>
+              <option value="salida_anticipada">Salida anticipada</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex:1;margin-bottom:0;">
+            <label class="form-label">Estado</label>
+            <select
+              id="f-estado"
+              class="form-select"
+              onchange="inconsistenciasModule.filtrar()"
+            >
+              <option value="">Todos</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="justificada">Justificada</option>
+              <option value="cubierta">Cubierta</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Fecha</label>
+            <input
+              id="filtro-fecha"
+              type="date"
+              class="form-input"
+              onchange="inconsistenciasModule.filtrar()"
+            />
+          </div>
+
+          <button
+            class="btn btn-secondary"
+            onclick="inconsistenciasModule.limpiarFiltros()"
+          >
+            Limpiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Registro de inconsistencias</h2>
+        </div>
+        <div id="tabla-inconsistencias"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal justificación -->
+  <div id="modal-justificacion" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar justificación</h3>
+        <button class="modal-close" onclick="ui.cerrarModal('modal-justificacion')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="justificacion-error" class="alert alert-error"></div>
+
+        <input type="hidden" id="f-id-inconsistencia" />
+
+        <div class="form-group">
+          <label class="form-label">Descripción</label>
+          <textarea
+            id="f-descripcion"
+            class="form-input"
+            rows="4"
+            placeholder="Describí el motivo de la inconsistencia..."
+            style="resize:vertical;"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="ui.cerrarModal('modal-justificacion')">
+          Cancelar
+        </button>
+        <button class="btn btn-primary" onclick="inconsistenciasModule.justificar()">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/auth.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/modules/inconsistencias.js"></script>
+</body>
+</html>

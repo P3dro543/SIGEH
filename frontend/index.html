@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIGEH – VigSafe Seguridad</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .login-wrapper {
+      display: flex;
+      width: 100%;
+      max-width: 860px;
+      min-height: 520px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 0.5px solid var(--glass-border);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-left {
+      width: 45%;
+      background: rgba(255, 255, 255, 0.04);
+      border-right: 0.5px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      gap: 2rem;
+    }
+
+    .login-shield {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      background: var(--indigo-bg);
+      border: 0.5px solid var(--indigo-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-brand { text-align: center; }
+    .login-brand-name { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; }
+    .login-brand-vig { color: #fff; }
+    .login-brand-safe { color: var(--indigo-light); }
+    .login-brand-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      margin-top: 4px;
+    }
+
+    .login-divider {
+      width: 36px; height: 1px;
+      background: var(--indigo-light);
+      opacity: 0.3;
+    }
+
+    .login-tagline {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+      max-width: 200px;
+    }
+
+    .login-right {
+      width: 55%;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2.5rem;
+    }
+
+    .login-form { width: 100%; max-width: 300px; }
+
+    .login-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .login-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 11px;
+      margin-top: 4px;
+    }
+
+    .login-footer {
+      font-size: 11px;
+      color: rgba(255,255,255,0.15);
+      text-align: center;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-left">
+      <div class="login-shield">
+        <svg width="32" height="32" viewBox="0 0 80 80" fill="none">
+          <path d="M40 6L12 18V42C12 57 24 68 40 74C56 68 68 57 68 42V18L40 6Z" fill="#4F46E5" fill-opacity="0.3" stroke="#818cf8" stroke-width="1.5"/>
+          <circle cx="40" cy="33" r="8" fill="#818cf8" opacity="0.7"/>
+          <circle cx="40" cy="33" r="4" fill="white" opacity="0.9"/>
+        </svg>
+      </div>
+
+      <div class="login-brand">
+        <div class="login-brand-name">
+          <span class="login-brand-vig">VIG</span><span class="login-brand-safe">SAFE</span>
+        </div>
+        <div class="login-brand-sub">SEGURIDAD PRIVADA</div>
+      </div>
+
+      <div class="login-divider"></div>
+
+      <p class="login-tagline">Sistema Integral de Gestión de Horarios y Asistencia</p>
+    </div>
+
+    <div class="login-right">
+      <div class="login-form">
+        <h1 class="login-title">Iniciar sesión</h1>
+        <p class="login-subtitle">Ingresá tus credenciales para continuar</p>
+
+        <div id="login-error" class="alert alert-error">Error al iniciar sesión</div>
+
+        <div class="form-group">
+          <label class="form-label">Usuario</label>
+          <input id="username" type="text" class="form-input" placeholder="tu usuario" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input id="password" type="password" class="form-input" placeholder="••••••••" />
+        </div>
+
+        <button onclick="handleLogin()" class="btn btn-primary btn-login">
+          Ingresar al sistema
+        </button>
+
+        <p class="login-footer">SIGEH v1.0 · VigSafe Seguridad S.A.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    if (auth.isAuthenticated()) {
+      window.location.href = 'pages/dashboard.html';
+    }
+
+    async function handleLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      ui.ocultarError('login-error');
+      if (!username || !password) {
+        ui.mostrarError('login-error', 'Completá todos los campos.');
+        return;
+      }
+      try {
+        await auth.login(username, password);
+        window.location.href = 'pages/dashboard.html';
+      } catch (err) {
+        ui.mostrarError('login-error', err.message);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "sigeh-backend",
+  "version": "1.0.0",
+  "description": "Backend SIGEH - VigSafe Seguridad S.A.",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "exceljs": "^4.4.0",
+    "express": "^4.18.0",
+    "jsonwebtoken": "^9.0.0",
+    "mysql2": "^3.0.0",
+    "pdfkit": "^0.19.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

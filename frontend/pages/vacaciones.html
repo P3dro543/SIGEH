@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vacaciones – SIGEH</title>
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/navbar.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+</head>
+
+<body>
+  <div class="layout-navbar">
+    <div id="navbar-container"></div>
+
+    <main class="page-body-navbar">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <h1 class="page-title">Vacaciones</h1>
+
+        <button class="btn btn-primary" onclick="vacacionesModule.abrirModal()">
+          + Nueva solicitud
+        </button>
+      </div>
+
+      <!-- Filtros -->
+      <div class="card" style="margin-bottom:1.25rem;">
+        <div class="card-body" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+
+          <div class="form-group" style="flex:2;margin-bottom:0;">
+            <label class="form-label">Buscar</label>
+            <input
+              id="filtro-busqueda"
+              type="text"
+              class="form-input"
+              placeholder="Nombre, cédula..."
+              oninput="vacacionesModule.filtrar()"
+            />
+          </div>
+
+          <div class="form-group" style="flex:1;margin-bottom:0;">
+            <label class="form-label">Estado</label>
+            <select
+              id="filtro-estado"
+              class="form-select"
+              onchange="vacacionesModule.filtrar()"
+            >
+              <option value="">Todos</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="aprobada">Aprobada</option>
+              <option value="rechazada">Rechazada</option>
+            </select>
+          </div>
+
+          <button
+            class="btn btn-secondary"
+            onclick="vacacionesModule.limpiarFiltros()"
+          >
+            Limpiar
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="card">
+        <div id="tabla-vacaciones"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal nueva vacación -->
+  <div id="modal-vacacion" class="modal-overlay">
+
+    <div class="modal">
+
+      <div class="modal-header">
+        <h3 class="modal-title">
+          Nueva solicitud de vacaciones
+        </h3>
+
+        <button class="modal-close" onclick="ui.cerrarModal('modal-vacacion')">
+          &times;
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <div id="vacacion-error" class="alert alert-error"></div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Empleado
+          </label>
+
+          <select id="f-id-empleado" class="form-select">
+          </select>
+        </div>
+
+        <div class="form-grid-2">
+
+          <div class="form-group">
+            <label class="form-label">
+              Fecha inicio
+            </label>
+
+            <input
+              id="f-fecha-inicio"
+              type="date"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Fecha fin
+            </label>
+
+            <input
+              id="f-fecha-fin"
+              type="date"
+              class="form-input"
+            />
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          class="btn btn-secondary"
+          onclick="ui.cerrarModal('modal-vacacion')">
+          Cancelar
+        </button>
+
+        <button
+          class="btn btn-primary"
+          onclick="vacacionesModule.guardar()">
+          Guardar
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../js/auth.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/modules/vacaciones.js"></script>
+
+</body>
+</html>
