@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://sigeh-dusky.vercel.app/api'; // Cambia esto a la URL de tu backend
 
 const getToken = () => localStorage.getItem('token');
 
