@@ -10,8 +10,8 @@ const login = async (username, password) => {
   const passwordValido = await bcrypt.compare(password, usuario.password);
   if (!passwordValido) throw new Error('Contraseña incorrecta');
 
-  const [empleados] = await pool.query(
-    'SELECT id_empleado FROM EMPLEADO WHERE id_usuario = ?',
+  const { rows: empleados } = await pool.query(
+    'SELECT id_empleado FROM EMPLEADO WHERE id_usuario = $1',
     [usuario.id_usuario]
   );
 

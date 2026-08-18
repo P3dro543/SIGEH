@@ -29,11 +29,11 @@ const remove = async (id) => {
   await getById(id);
 
   // Verificar si hay horarios activos con esta jornada
-  const [horarios] = await pool.query(
+  const { rows: horarios } = await pool.query(
     `SELECT h.*, e.nombre, e.apellido 
      FROM HORARIO h
      JOIN EMPLEADO e ON h.id_empleado = e.id_empleado
-     WHERE h.id_jornada = ? AND h.fecha_fin >= CURDATE()`,
+     WHERE h.id_jornada = $1 AND h.fecha_fin >= CURRENT_DATE`,
     [id]
   );
 

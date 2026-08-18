@@ -22,24 +22,24 @@ const getAsistenciasPorPeriodo = async (
       AND a.fecha BETWEEN h.fecha_inicio AND h.fecha_fin
     LEFT JOIN JORNADA j
       ON h.id_jornada = j.id_jornada
-    WHERE a.fecha BETWEEN ? AND ?
+    WHERE a.fecha BETWEEN $1 AND $2
   `;
 
   const params = [fecha_inicio, fecha_fin];
 
   if (id_area) {
-    query += ` AND e.id_area = ?`;
+    query += ` AND e.id_area = $${params.length + 1}`;
     params.push(id_area);
   }
 
   if (id_empleado) {
-    query += ` AND e.id_empleado = ?`;
+    query += ` AND e.id_empleado = $${params.length + 1}`;
     params.push(id_empleado);
   }
 
   query += ` ORDER BY a.fecha DESC, e.apellido ASC`;
 
-  const [rows] = await pool.query(query, params);
+  const { rows } = await pool.query(query, params);
   return rows;
 };
 
@@ -64,29 +64,29 @@ const getInconsistenciasPorPeriodo = async (
       ON a.id_empleado = e.id_empleado
     JOIN AREA ar
       ON e.id_area = ar.id_area
-    WHERE a.fecha BETWEEN ? AND ?
+    WHERE a.fecha BETWEEN $1 AND $2
   `;
 
   const params = [fecha_inicio, fecha_fin];
 
   if (tipo) {
-    query += ` AND i.tipo = ?`;
+    query += ` AND i.tipo = $${params.length + 1}`;
     params.push(tipo);
   }
 
   if (id_area) {
-    query += ` AND e.id_area = ?`;
+    query += ` AND e.id_area = $${params.length + 1}`;
     params.push(id_area);
   }
 
   if (id_empleado) {
-    query += ` AND e.id_empleado = ?`;
+    query += ` AND e.id_empleado = $${params.length + 1}`;
     params.push(id_empleado);
   }
 
   query += ` ORDER BY i.fecha_hora DESC`;
 
-  const [rows] = await pool.query(query, params);
+  const { rows } = await pool.query(query, params);
   return rows;
 };
 
@@ -112,21 +112,21 @@ const getResumenPorEmpleado = async (
       ON e.id_area = ar.id_area
     LEFT JOIN ASISTENCIA a
       ON e.id_empleado = a.id_empleado
-      AND a.fecha BETWEEN ? AND ?
+      AND a.fecha BETWEEN $1 AND $2
     LEFT JOIN INCONSISTENCIA i
       ON a.id_asistencia = i.id_asistencia
-    WHERE e.activo = 1
+    WHERE e.activo = true
   `;
 
   const params = [fecha_inicio, fecha_fin];
 
   if (id_area) {
-    query += ` AND e.id_area = ?`;
+    query += ` AND e.id_area = $${params.length + 1}`;
     params.push(id_area);
   }
 
   if (id_empleado) {
-    query += ` AND e.id_empleado = ?`;
+    query += ` AND e.id_empleado = $${params.length + 1}`;
     params.push(id_empleado);
   }
 
@@ -140,7 +140,7 @@ const getResumenPorEmpleado = async (
     ORDER BY e.apellido ASC
   `;
 
-  const [rows] = await pool.query(query, params);
+  const { rows } = await pool.query(query, params);
   return rows;
 };
 

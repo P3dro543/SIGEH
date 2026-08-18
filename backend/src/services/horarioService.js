@@ -20,18 +20,18 @@ const create = async (data) => {
   const empleado = await empleadoRepository.findById(id_empleado);
   if (!empleado) throw new Error('Empleado no encontrado');
 
-  const [jornadas] = await pool.query(
-    'SELECT * FROM JORNADA WHERE id_jornada = ?', [id_jornada]
+  const { rows: jornadas } = await pool.query(
+    'SELECT * FROM JORNADA WHERE id_jornada = $1', [id_jornada]
   );
   if (jornadas.length === 0) throw new Error('Jornada no encontrada');
 
-  const [conflictos] = await pool.query(
+  const { rows: conflictos } = await pool.query(
     `SELECT * FROM HORARIO 
-     WHERE id_empleado = ? 
+     WHERE id_empleado = $1
      AND (
-       (fecha_inicio BETWEEN ? AND ?) OR
-       (fecha_fin BETWEEN ? AND ?) OR
-       (? BETWEEN fecha_inicio AND fecha_fin)
+       (fecha_inicio BETWEEN $2 AND $3) OR
+       (fecha_fin BETWEEN $4 AND $5) OR
+       ($6 BETWEEN fecha_inicio AND fecha_fin)
      )`,
     [id_empleado, fecha_inicio, fecha_fin, fecha_inicio, fecha_fin, fecha_inicio]
   );

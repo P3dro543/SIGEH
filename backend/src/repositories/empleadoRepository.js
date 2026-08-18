@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 const findAll = async () => {
-  const [rows] = await pool.query(
+  const { rows } = await pool.query(
     `SELECT e.*, a.nombre AS area, u.username,
             j.nombre AS jornada
      FROM EMPLEADO e
@@ -9,15 +9,16 @@ const findAll = async () => {
      JOIN USUARIO u ON e.id_usuario = u.id_usuario
      LEFT JOIN HORARIO h
        ON h.id_empleado = e.id_empleado
-      AND CURDATE() BETWEEN h.fecha_inicio AND h.fecha_fin
+      AND CURRENT_DATE BETWEEN h.fecha_inicio AND h.fecha_fin
      LEFT JOIN JORNADA j
        ON h.id_jornada = j.id_jornada`
   );
+
   return rows;
 };
 
 const findById = async (id) => {
-  const [rows] = await pool.query(
+  const { rows } = await pool.query(
     `SELECT e.*, a.nombre AS area, u.username,
             j.nombre AS jornada
      FROM EMPLEADO e
@@ -25,20 +26,22 @@ const findById = async (id) => {
      JOIN USUARIO u ON e.id_usuario = u.id_usuario
      LEFT JOIN HORARIO h
        ON h.id_empleado = e.id_empleado
-      AND CURDATE() BETWEEN h.fecha_inicio AND h.fecha_fin
+      AND CURRENT_DATE BETWEEN h.fecha_inicio AND h.fecha_fin
      LEFT JOIN JORNADA j
        ON h.id_jornada = j.id_jornada
-     WHERE e.id_empleado = ?`,
+     WHERE e.id_empleado = $1`,
     [id]
   );
+
   return rows[0] || null;
 };
 
 const findByCedula = async (cedula) => {
-  const [rows] = await pool.query(
-    'SELECT * FROM EMPLEADO WHERE cedula = ?',
+  const { rows } = await pool.query(
+    'SELECT * FROM EMPLEADO WHERE cedula = $1',
     [cedula]
   );
+
   return rows[0] || null;
 };
 
@@ -53,14 +56,15 @@ const create = async (empleado) => {
     id_usuario
   } = empleado;
 
-  const [result] = await pool.query(
+  const { rows } = await pool.query(
     `INSERT INTO EMPLEADO
       (cedula, nombre, apellido, telefono, email, id_area, id_usuario)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING id_empleado`,
     [cedula, nombre, apellido, telefono, email, id_area, id_usuario]
   );
 
-  return result.insertId;
+  return rows[0].id_empleado;
 };
 
 const update = async (id, empleado) => {
@@ -76,14 +80,14 @@ const update = async (id, empleado) => {
 
   await pool.query(
     `UPDATE EMPLEADO
-     SET cedula = ?,
-         nombre = ?,
-         apellido = ?,
-         telefono = ?,
-         email = ?,
-         id_area = ?,
-         activo = ?
-     WHERE id_empleado = ?`,
+     SET cedula = $1,
+         nombre = $2,
+         apellido = $3,
+         telefono = $4,
+         email = $5,
+         id_area = $6,
+         activo = $7
+     WHERE id_empleado = $8`,
     [cedula, nombre, apellido, telefono, email, id_area, activo, id]
   );
 };

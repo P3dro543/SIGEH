@@ -4,12 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Empleados – SIGEH</title>
-
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
   <link rel="stylesheet" href="../css/components.css" />
-
-  <!-- Tom Select -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css">
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 </head>
@@ -23,54 +20,34 @@
         <button class="btn btn-primary" onclick="empleadosModule.abrirModal()">+ Nuevo empleado</button>
       </div>
 
-      <!-- Filtros -->
       <div class="card" style="margin-bottom:1.25rem;">
         <div class="card-body" style="display:flex;gap:12px;align-items:flex-end;">
           <div class="form-group" style="flex:1;margin-bottom:0;">
             <label class="form-label">Buscar</label>
-            <input
-              id="filtro-busqueda"
-              type="text"
-              class="form-input"
-              placeholder="Nombre, cédula, área..."
-              oninput="empleadosModule.filtrar()"
-            />
+            <input id="filtro-busqueda" type="text" class="form-input"
+              placeholder="Nombre, cédula, área..." oninput="empleadosModule.filtrar()" />
           </div>
-
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Área</label>
-            <select
-              id="filtro-area"
-              class="form-select"
-              onchange="empleadosModule.filtrar()"
-            >
+            <select id="filtro-area" class="form-select" onchange="empleadosModule.filtrar()">
               <option value="">Todas</option>
               <option value="Vigilancia">Vigilancia</option>
               <option value="Salud Ocupacional">Salud Ocupacional</option>
               <option value="Planta">Planta</option>
             </select>
           </div>
-
           <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Estado</label>
-            <select
-              id="filtro-estado"
-              class="form-select"
-              onchange="empleadosModule.filtrar()"
-            >
+            <select id="filtro-estado" class="form-select" onchange="empleadosModule.filtrar()">
               <option value="">Todos</option>
               <option value="activo">Activo</option>
               <option value="inactivo">Inactivo</option>
             </select>
           </div>
-
-          <button class="btn btn-secondary" onclick="empleadosModule.limpiarFiltros()">
-            Limpiar
-          </button>
+          <button class="btn btn-secondary" onclick="empleadosModule.limpiarFiltros()">Limpiar</button>
         </div>
       </div>
 
-      <!-- Tabla -->
       <div class="card">
         <div id="tabla-empleados"></div>
       </div>
@@ -79,46 +56,43 @@
 
   <!-- Modal nuevo empleado -->
   <div id="modal-empleado" class="modal-overlay">
-    <div class="modal" style="max-width:560px;">
+    <div class="modal modal-lg">
       <div class="modal-header">
         <h3 class="modal-title">Nuevo empleado</h3>
         <button class="modal-close" onclick="ui.cerrarModal('modal-empleado')">&times;</button>
       </div>
-
       <div class="modal-body">
         <div id="empleado-error" class="alert alert-error"></div>
 
-        <div class="form-grid-2">
-          <div class="form-group">
+        <p class="form-section-title">Información personal</p>
+        <div class="form-grid-2" style="margin-bottom:12px;">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Nombre</label>
             <input id="f-nombre" type="text" class="form-input" placeholder="Juan" />
           </div>
-
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Apellido</label>
             <input id="f-apellido" type="text" class="form-input" placeholder="Pérez" />
           </div>
         </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
+        <div class="form-grid-3" style="margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Cédula</label>
             <input id="f-cedula" type="text" class="form-input" placeholder="118240000" />
           </div>
-
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Teléfono</label>
             <input id="f-telefono" type="text" class="form-input" placeholder="88001122" />
           </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Email</label>
+            <input id="f-email" type="email" class="form-input" placeholder="correo@vigsafe.com" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input id="f-email" type="email" class="form-input" placeholder="correo@vigsafe.com" />
-        </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
+        <p class="form-section-title">Acceso y área</p>
+        <div class="form-grid-2" style="margin-bottom:12px;">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Área</label>
             <select id="f-area" class="form-select">
               <option value="1">Vigilancia</option>
@@ -126,8 +100,7 @@
               <option value="3">Planta</option>
             </select>
           </div>
-
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Rol</label>
             <select id="f-rol" class="form-select">
               <option value="4">Empleado</option>
@@ -136,45 +109,33 @@
             </select>
           </div>
         </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
+        <div class="form-grid-2" style="margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Usuario</label>
             <input id="f-username" type="text" class="form-input" placeholder="jperez" />
           </div>
-
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom:0;">
             <label class="form-label">Contraseña</label>
             <input id="f-password" type="password" class="form-input" placeholder="••••••••" />
           </div>
         </div>
 
-        <!-- Asignación de jornada -->
-        <div style="border-top:0.5px solid var(--glass-border-subtle);margin:1rem 0;padding-top:1rem;">
-          <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">
-            Asignación de jornada
-          </p>
-
-          <div class="form-group">
-            <label class="form-label">Jornada</label>
-            <select id="f-jornada" class="form-select"></select>
+        <p class="form-section-title">Jornada laboral</p>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Jornada</label>
+          <select id="f-jornada" class="form-select"></select>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Fecha inicio</label>
+            <input id="f-horario-inicio" type="date" class="form-input" />
           </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label class="form-label">Fecha inicio</label>
-              <input id="f-horario-inicio" type="date" class="form-input" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Fecha fin</label>
-              <input id="f-horario-fin" type="date" class="form-input" />
-            </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Fecha fin</label>
+            <input id="f-horario-fin" type="date" class="form-input" />
           </div>
         </div>
-
       </div>
-
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="ui.cerrarModal('modal-empleado')">Cancelar</button>
         <button class="btn btn-primary" onclick="empleadosModule.guardar()">Guardar</button>

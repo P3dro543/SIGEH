@@ -1,6 +1,9 @@
 name: app_movil
+
 description: SIGEH - VigSafe App Móvil
+
 publish_to: 'none'
+
 version: 1.0.0+1
 
 environment:
@@ -9,13 +12,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
   http: ^1.2.0
   shared_preferences: ^2.2.0
-  intl: ^0.19.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^4.0.0
 
 flutter:

@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 const findAll = async () => {
-  const [rows] = await pool.query(
+  const { rows } = await pool.query(
     `SELECT p.*, e.nombre, e.apellido, e.cedula
      FROM PERMISO p
      JOIN EMPLEADO e ON p.id_empleado = e.id_empleado
@@ -11,19 +11,19 @@ const findAll = async () => {
 };
 
 const findById = async (id) => {
-  const [rows] = await pool.query(
+  const { rows } = await pool.query(
     `SELECT p.*, e.nombre, e.apellido, e.cedula
      FROM PERMISO p
      JOIN EMPLEADO e ON p.id_empleado = e.id_empleado
-     WHERE p.id_permiso = ?`,
+     WHERE p.id_permiso = $1`,
     [id]
   );
   return rows[0] || null;
 };
 
 const findByEmpleado = async (id_empleado) => {
-  const [rows] = await pool.query(
-    'SELECT * FROM PERMISO WHERE id_empleado = ? ORDER BY fecha_inicio DESC',
+  const { rows } = await pool.query(
+    'SELECT * FROM PERMISO WHERE id_empleado = $1 ORDER BY fecha_inicio DESC',
     [id_empleado]
   );
   return rows;
@@ -31,16 +31,16 @@ const findByEmpleado = async (id_empleado) => {
 
 const create = async (permiso) => {
   const { fecha_inicio, fecha_fin, motivo, id_empleado } = permiso;
-  const [result] = await pool.query(
-    'INSERT INTO PERMISO (fecha_inicio, fecha_fin, motivo, estado, id_empleado) VALUES (?, ?, ?, "pendiente", ?)',
+  const { rows } = await pool.query(
+    "INSERT INTO PERMISO (fecha_inicio, fecha_fin, motivo, estado, id_empleado) VALUES ($1, $2, $3, 'pendiente', $4) RETURNING id_permiso",
     [fecha_inicio, fecha_fin, motivo, id_empleado]
   );
-  return result.insertId;
+  return rows[0].id_permiso;
 };
 
 const updateEstado = async (id, estado) => {
   await pool.query(
-    'UPDATE PERMISO SET estado = ? WHERE id_permiso = ?',
+    'UPDATE PERMISO SET estado = $1 WHERE id_permiso = $2',
     [estado, id]
   );
 };

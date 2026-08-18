@@ -18,8 +18,8 @@ const create = async (data) => {
     throw new Error('Descripción e inconsistencia son requeridas');
   }
 
-  const [inconsistencias] = await pool.query(
-    'SELECT * FROM INCONSISTENCIA WHERE id_inconsistencia = ?',
+  const { rows: inconsistencias } = await pool.query(
+    'SELECT * FROM INCONSISTENCIA WHERE id_inconsistencia = $1',
     [id_inconsistencia]
   );
 
@@ -37,7 +37,7 @@ const aprobar = async (id) => {
   await pool.query(
     `UPDATE INCONSISTENCIA SET estado = 'justificada'
      WHERE id_inconsistencia = (
-       SELECT id_inconsistencia FROM JUSTIFICACION WHERE id_justificacion = ?
+       SELECT id_inconsistencia FROM JUSTIFICACION WHERE id_justificacion = $1
      )`,
     [id]
   );

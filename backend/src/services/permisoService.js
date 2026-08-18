@@ -36,10 +36,10 @@ const create = async (data) => {
   if (!empleado) throw new Error('Empleado no encontrado');
 
   // Verificar vacaciones aprobadas en ese período
-  const [vacaciones] = await pool.query(
+  const { rows: vacaciones } = await pool.query(
     `SELECT * FROM VACACION 
-     WHERE id_empleado = ? AND estado = 'aprobada'
-     AND (fecha_inicio BETWEEN ? AND ? OR fecha_fin BETWEEN ? AND ? OR ? BETWEEN fecha_inicio AND fecha_fin)`,
+     WHERE id_empleado = $1 AND estado = 'aprobada'
+     AND (fecha_inicio BETWEEN $2 AND $3 OR fecha_fin BETWEEN $4 AND $5 OR $6 BETWEEN fecha_inicio AND fecha_fin)`,
     [id_empleado, fecha_inicio, fecha_fin, fecha_inicio, fecha_fin, fecha_inicio]
   );
   if (vacaciones.length > 0) {
@@ -47,10 +47,10 @@ const create = async (data) => {
   }
 
   // Verificar permisos aprobados en ese período
-  const [permisos] = await pool.query(
+  const { rows: permisos } = await pool.query(
     `SELECT * FROM PERMISO 
-     WHERE id_empleado = ? AND estado = 'aprobado'
-     AND (fecha_inicio BETWEEN ? AND ? OR fecha_fin BETWEEN ? AND ? OR ? BETWEEN fecha_inicio AND fecha_fin)`,
+     WHERE id_empleado = $1 AND estado = 'aprobado'
+     AND (fecha_inicio BETWEEN $2 AND $3 OR fecha_fin BETWEEN $4 AND $5 OR $6 BETWEEN fecha_inicio AND fecha_fin)`,
     [id_empleado, fecha_inicio, fecha_fin, fecha_inicio, fecha_fin, fecha_inicio]
   );
   if (permisos.length > 0) {
@@ -58,9 +58,9 @@ const create = async (data) => {
   }
 
   // Verificar si ya trabajó en esas fechas
-  const [asistencias] = await pool.query(
+  const { rows: asistencias } = await pool.query(
     `SELECT * FROM ASISTENCIA 
-     WHERE id_empleado = ? AND fecha BETWEEN ? AND ?`,
+     WHERE id_empleado = $1 AND fecha BETWEEN $2 AND $3`,
     [id_empleado, fecha_inicio, fecha_fin]
   );
   if (asistencias.length > 0) {

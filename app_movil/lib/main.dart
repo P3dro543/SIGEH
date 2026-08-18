@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/auth_service.dart';
@@ -8,7 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF111827),
+      statusBarColor: Color(0xFF0f0c29),
       statusBarIconBrightness: Brightness.light,
     ),
   );
@@ -23,11 +24,21 @@ class SigehApp extends StatelessWidget {
     return MaterialApp(
       title: 'SIGEH – VigSafe',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', 'CR'),
+        Locale('es'),
+      ],
+      locale: const Locale('es', 'CR'),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1D4ED8)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4F46E5)),
         useMaterial3: true,
         fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF3F4F6),
+        scaffoldBackgroundColor: const Color(0xFF0f0c29),
       ),
       home: const _SplashRouter(),
     );
@@ -64,9 +75,9 @@ class _SplashRouterState extends State<_SplashRouter> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFF111827),
+      backgroundColor: Color(0xFF0f0c29),
       body: Center(
-        child: CircularProgressIndicator(color: Color(0xFF1D4ED8)),
+        child: CircularProgressIndicator(color: Color(0xFF4F46E5)),
       ),
     );
   }

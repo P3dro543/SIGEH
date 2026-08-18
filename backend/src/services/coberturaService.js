@@ -12,14 +12,14 @@ const getById = async (id) => {
 };
 
 const buscarSustitutos = async (id_inconsistencia) => {
-  const [inconsistencias] = await pool.query(
+  const { rows: inconsistencias } = await pool.query(
     `SELECT i.*, a.id_empleado, a.fecha,
      h.id_jornada, j.horas_maximas, j.hora_inicio, j.hora_fin
      FROM INCONSISTENCIA i
      JOIN ASISTENCIA a ON i.id_asistencia = a.id_asistencia
      JOIN HORARIO h ON h.id_empleado = a.id_empleado AND a.fecha BETWEEN h.fecha_inicio AND h.fecha_fin
      JOIN JORNADA j ON h.id_jornada = j.id_jornada
-     WHERE i.id_inconsistencia = ?`,
+     WHERE i.id_inconsistencia = $1`,
     [id_inconsistencia]
   );
 
@@ -30,28 +30,28 @@ const buscarSustitutos = async (id_inconsistencia) => {
   const id_empleado_ausente = inconsistencia.id_empleado;
   const horas_maximas = inconsistencia.horas_maximas;
 
-  const [sustitutos] = await pool.query(
+  const { rows: sustitutos } = await pool.query(
     `SELECT e.id_empleado, e.nombre, e.apellido, e.telefono,
-     COALESCE(SUM(TIMESTAMPDIFF(HOUR, a.hora_entrada, a.hora_salida)), 0) as horas_trabajadas
+     COALESCE(SUM(EXTRACT(EPOCH FROM (a.hora_salida - a.hora_entrada)) / 3600), 0) AS horas_trabajadas
      FROM EMPLEADO e
      LEFT JOIN ASISTENCIA a ON e.id_empleado = a.id_empleado 
-       AND YEARWEEK(a.fecha) = YEARWEEK(?)
-     WHERE e.activo = 1
-       AND e.id_empleado != ?
+       AND DATE_TRUNC('week', a.fecha) = DATE_TRUNC('week', $1::date)
+     WHERE e.activo = true
+       AND e.id_empleado != $2
        AND e.id_empleado NOT IN (
          SELECT id_empleado FROM PERMISO 
-         WHERE estado = 'aprobado' AND ? BETWEEN fecha_inicio AND fecha_fin
+         WHERE estado = 'aprobado' AND $3 BETWEEN fecha_inicio AND fecha_fin
        )
        AND e.id_empleado NOT IN (
          SELECT id_empleado FROM VACACION
-         WHERE estado = 'aprobada' AND ? BETWEEN fecha_inicio AND fecha_fin
+         WHERE estado = 'aprobada' AND $4 BETWEEN fecha_inicio AND fecha_fin
        )
        AND e.id_empleado NOT IN (
          SELECT id_empleado FROM ASISTENCIA
-         WHERE fecha = ? AND hora_entrada IS NOT NULL
+         WHERE fecha = $5 AND hora_entrada IS NOT NULL
        )
-     GROUP BY e.id_empleado
-     HAVING horas_trabajadas + ? <= ?
+     GROUP BY e.id_empleado, e.nombre, e.apellido, e.telefono
+     HAVING COALESCE(SUM(EXTRACT(EPOCH FROM (a.hora_salida - a.hora_entrada)) / 3600), 0) + $6 <= $7
      ORDER BY horas_trabajadas ASC`,
     [fecha, id_empleado_ausente, fecha, fecha, fecha, horas_maximas, horas_maximas]
   );
@@ -67,7 +67,9 @@ const asignarCobertura = async (data) => {
   }
 
   const sustitutos = await buscarSustitutos(id_inconsistencia);
-  const sustitutoValido = sustitutos.find(s => s.id_empleado === id_empleado_sustituto);
+  const sustitutoValido = sustitutos.find(
+    (s) => Number(s.id_empleado) === Number(id_empleado_sustituto)
+  );
 
   if (!sustitutoValido) {
     throw new Error('El sustituto no cumple con los requisitos legales de jornada');
@@ -77,7 +79,7 @@ const asignarCobertura = async (data) => {
   const id = await coberturaRepository.create({ fecha, id_inconsistencia, id_empleado_sustituto });
 
   await pool.query(
-    `UPDATE INCONSISTENCIA SET estado = 'cubierta' WHERE id_inconsistencia = ?`,
+    `UPDATE INCONSISTENCIA SET estado = 'cubierta' WHERE id_inconsistencia = $1`,
     [id_inconsistencia]
   );
 

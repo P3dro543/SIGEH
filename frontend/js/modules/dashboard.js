@@ -1,6 +1,11 @@
 auth.verificarAcceso();
 navbar.render('dashboard.html');
 
+const gridColor = 'rgba(255,255,255,0.05)';
+const tickColor = 'rgba(255,255,255,0.4)';
+
+let chartLine, chartBar, chartDonut;
+
 
 /* =====================================================
    FECHA ACTUAL
@@ -22,15 +27,6 @@ if (elementoFecha) {
 
 
 /* =====================================================
-   VARIABLES DE LOS GRAFICOS
-   ===================================================== */
-
-let chartLine = null;
-let chartBar = null;
-let chartDonut = null;
-
-
-/* =====================================================
    CARGAR DASHBOARD
    ===================================================== */
 
@@ -43,13 +39,13 @@ async function cargarDashboard() {
         const [
             empleados,
             asistencias,
-            permisos,
-            inconsistencias
+            inconsistencias,
+            permisos
         ] = await Promise.all([
             api.get('/empleados'),
             api.get('/asistencias'),
-            api.get('/permisos'),
-            api.get('/inconsistencias')
+            api.get('/inconsistencias'),
+            api.get('/permisos')
         ]);
 
 
@@ -57,78 +53,46 @@ async function cargarDashboard() {
            EMPLEADOS ACTIVOS
            ================================================= */
 
-        const empleadosActivos =
+        const activos =
             empleados.filter(e => e.activo).length;
 
         document.getElementById('total-empleados').textContent =
-            empleadosActivos;
+            activos;
 
 
         /* =================================================
            FECHA DE HOY
            ================================================= */
 
-        const hoy = new Date();
-
-        const hoyTexto =
-            hoy.getFullYear() +
-            '-' +
-            String(hoy.getMonth() + 1).padStart(2, '0') +
-            '-' +
-            String(hoy.getDate()).padStart(2, '0');
+        const hoy =
+            new Date().toISOString().split('T')[0];
 
 
         /* =================================================
            ASISTENCIA DE HOY
            ================================================= */
 
-        const asistenciaHoy = asistencias.filter(a => {
-
-            if (!a.fecha) {
-                return false;
-            }
-
-            const fechaAsistencia =
-                new Date(a.fecha);
-
-            const fechaTexto =
-                fechaAsistencia.getFullYear() +
-                '-' +
-                String(fechaAsistencia.getMonth() + 1).padStart(2, '0') +
-                '-' +
-                String(fechaAsistencia.getDate()).padStart(2, '0');
-
-            return fechaTexto === hoyTexto;
-
-        });
-
+        const asistenciaHoy =
+            asistencias.filter(a =>
+                a.fecha &&
+                a.fecha.startsWith(hoy)
+            );
 
         document.getElementById('asistencia-hoy').textContent =
             asistenciaHoy.length;
 
 
         /* =================================================
-           INCONSISTENCIAS
+           INCONSISTENCIAS PENDIENTES
            ================================================= */
 
-        const inconsistenciasPendientes =
-            inconsistencias.filter(i => {
-
-                if (i.estado === undefined) {
-                    return true;
-                }
-
-                return (
-                    i.estado === 'Pendiente' ||
-                    i.estado === 'pendiente' ||
-                    i.estado === 'PENDIENTE'
-                );
-
-            });
-
+        const pendientes =
+            inconsistencias.filter(i =>
+                i.estado === 'pendiente'
+            );
 
         document.getElementById('inconsistencias').textContent =
-            inconsistenciasPendientes.length;
+            pendientes.length;
 
 
         /* =================================================
@@ -137,6 +101,566 @@ async function cargarDashboard() {
 
         document.getElementById('permisos').textContent =
             permisos.length;
+
+
+        /* =================================================
+           GRAFICO DE LINEA
+           ASISTENCIA DE LOS ULTIMOS 7 DIAS
+           ================================================= */
+
+        const dias = [];
+        const datosAsistencia = [];
+
+        for (let i = 6; i >= 0; i--) {
+
+            const d = new Date();
+
+            d.setDate(
+                d.getDate() - i
+            );
+
+            const fechaStr =
+                d.toISOString().split('T')[0];
+
+            dias.push(
+                d.toLocaleDateString(
+                    'es-CR',
+                    {
+                        weekday: 'short'
+                    }
+                )
+            );
+
+            datosAsistencia.push(
+                asistencias.filter(a =>
+                    a.fecha &&
+                    a.fecha.startsWith(fechaStr)
+                ).length
+            );
+
+        }
+
+
+        if (chartLine) {
+            chartLine.destroy();
+        }
+
+
+        const canvasLine =
+            document.getElementById('chart-line');
+
+        if (canvasLine) {
+
+            chartLine = new Chart(
+                canvasLine,
+                {
+                    type: 'line',
+
+                    data: {
+
+                        labels: dias,
+
+                        datasets: [
+
+                            {
+                                label: 'Asistencias',
+
+                                data: datosAsistencia,
+
+                                borderColor: '#818cf8',
+
+                                backgroundColor:
+                                    'rgba(129,140,248,0.08)',
+
+                                borderWidth: 2,
+
+                                fill: true,
+
+                                tension: 0.4,
+
+                                pointBackgroundColor:
+                                    '#818cf8',
+
+                                pointBorderColor:
+                                    'rgba(15,12,41,1)',
+
+                                pointBorderWidth: 2,
+
+                                pointRadius: 5,
+
+                                pointHoverRadius: 7
+                            }
+
+                        ]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                display: false
+                            },
+
+                            tooltip: {
+
+                                backgroundColor:
+                                    'rgba(15,12,41,0.95)',
+
+                                borderColor:
+                                    'rgba(129,140,248,0.3)',
+
+                                borderWidth: 1,
+
+                                titleColor:
+                                    '#818cf8',
+
+                                bodyColor:
+                                    'rgba(255,255,255,0.7)',
+
+                                padding: 10,
+
+                                cornerRadius: 8
+                            }
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                grid: {
+                                    color: gridColor,
+                                    drawBorder: false
+                                },
+
+                                ticks: {
+
+                                    color: tickColor,
+
+                                    font: {
+                                        size: 11,
+                                        family: 'Inter'
+                                    }
+                                }
+                            },
+
+                            y: {
+
+                                grid: {
+                                    color: gridColor,
+                                    drawBorder: false
+                                },
+
+                                ticks: {
+
+                                    color: tickColor,
+
+                                    font: {
+                                        size: 11,
+                                        family: 'Inter'
+                                    },
+
+                                    stepSize: 1,
+
+                                    precision: 0
+                                },
+
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           GRAFICO DE BARRAS
+           INCONSISTENCIAS
+           ================================================= */
+
+        const tardanzas =
+            inconsistencias.filter(i =>
+                i.tipo === 'tardanza'
+            ).length;
+
+        const ausencias =
+            inconsistencias.filter(i =>
+                i.tipo === 'ausencia'
+            ).length;
+
+        const salidas =
+            inconsistencias.filter(i =>
+                i.tipo === 'salida_anticipada'
+            ).length;
+
+
+        if (chartBar) {
+            chartBar.destroy();
+        }
+
+
+        const canvasBar =
+            document.getElementById('chart-bar');
+
+        if (canvasBar) {
+
+            chartBar = new Chart(
+                canvasBar,
+                {
+                    type: 'bar',
+
+                    data: {
+
+                        labels: [
+                            'Tardanza',
+                            'Ausencia',
+                            'Salida ant.'
+                        ],
+
+                        datasets: [
+
+                            {
+                                data: [
+                                    tardanzas,
+                                    ausencias,
+                                    salidas
+                                ],
+
+                                backgroundColor: [
+                                    'rgba(251,191,36,0.5)',
+                                    'rgba(248,113,113,0.5)',
+                                    'rgba(96,165,250,0.5)'
+                                ],
+
+                                borderColor: [
+                                    '#fbbf24',
+                                    '#f87171',
+                                    '#60a5fa'
+                                ],
+
+                                borderWidth: 1.5,
+
+                                borderRadius: 8,
+
+                                borderSkipped: false,
+
+                                /* BARRAS MAS DELGADAS */
+                                barThickness: 32
+                            }
+                        ]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                display: false
+                            },
+
+                            tooltip: {
+
+                                backgroundColor:
+                                    'rgba(15,12,41,0.95)',
+
+                                borderColor:
+                                    'rgba(255,255,255,0.1)',
+
+                                borderWidth: 1,
+
+                                titleColor:
+                                    'rgba(255,255,255,0.8)',
+
+                                bodyColor:
+                                    'rgba(255,255,255,0.6)',
+
+                                padding: 10,
+
+                                cornerRadius: 8
+                            }
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                grid: {
+                                    display: false
+                                },
+
+                                ticks: {
+
+                                    color: tickColor,
+
+                                    font: {
+                                        size: 11,
+                                        family: 'Inter'
+                                    }
+                                }
+                            },
+
+                            y: {
+
+                                grid: {
+                                    color: gridColor,
+                                    drawBorder: false
+                                },
+
+                                ticks: {
+
+                                    color: tickColor,
+
+                                    font: {
+                                        size: 11,
+                                        family: 'Inter'
+                                    },
+
+                                    stepSize: 1,
+
+                                    precision: 0
+                                },
+
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           GRAFICO DONUT
+           ESTADO DE EMPLEADOS
+           ================================================= */
+
+        const enTurno =
+            asistenciaHoy.filter(a =>
+                a.hora_entrada &&
+                !a.hora_salida
+            ).length;
+
+
+        const completos =
+            asistenciaHoy.filter(a =>
+                a.hora_salida
+            ).length;
+
+
+        const ausentes =
+            Math.max(
+                activos - asistenciaHoy.length,
+                0
+            );
+
+
+        if (chartDonut) {
+            chartDonut.destroy();
+        }
+
+
+        const canvasDonut =
+            document.getElementById('chart-donut');
+
+        if (canvasDonut) {
+
+            chartDonut = new Chart(
+                canvasDonut,
+                {
+                    type: 'doughnut',
+
+                    data: {
+
+                        labels: [
+                            'En turno',
+                            'Completo',
+                            'Ausente'
+                        ],
+
+                        datasets: [
+
+                            {
+                                data: [
+                                    enTurno,
+                                    completos,
+                                    ausentes
+                                ],
+
+                                backgroundColor: [
+                                    'rgba(251,191,36,0.75)',
+                                    'rgba(52,211,153,0.75)',
+                                    'rgba(248,113,113,0.75)'
+                                ],
+
+                                borderColor: [
+                                    '#fbbf24',
+                                    '#34d399',
+                                    '#f87171'
+                                ],
+
+                                borderWidth: 1.5,
+
+                                hoverOffset: 4
+                            }
+                        ]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        cutout: '72%',
+
+                        plugins: {
+
+                            legend: {
+                                display: false
+                            },
+
+                            tooltip: {
+
+                                backgroundColor:
+                                    'rgba(15,12,41,0.95)',
+
+                                borderColor:
+                                    'rgba(255,255,255,0.1)',
+
+                                borderWidth: 1,
+
+                                titleColor:
+                                    'rgba(255,255,255,0.8)',
+
+                                bodyColor:
+                                    'rgba(255,255,255,0.6)',
+
+                                padding: 10,
+
+                                cornerRadius: 8
+                            }
+                        }
+                    }
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           LEYENDA DEL DONUT
+           ================================================= */
+
+        const donutLabels = [
+            'En turno',
+            'Completo',
+            'Ausente'
+        ];
+
+        const donutData = [
+            enTurno,
+            completos,
+            ausentes
+        ];
+
+        const donutColors = [
+            '#fbbf24',
+            '#34d399',
+            '#f87171'
+        ];
+
+        const total =
+            donutData.reduce(
+                (a, b) => a + b,
+                0
+            );
+
+
+        const legend =
+            document.getElementById('donut-legend');
+
+
+        if (legend) {
+
+            legend.innerHTML = '';
+
+            donutLabels.forEach((label, index) => {
+
+                const porcentaje =
+                    total > 0
+                        ? Math.round(
+                            donutData[index] /
+                            total *
+                            100
+                        )
+                        : 0;
+
+
+                legend.innerHTML += `
+
+                    <div class="donut-legend-item">
+
+                        <div style="
+                            display:flex;
+                            align-items:center;
+                            gap:8px;
+                        ">
+
+                            <div
+                                class="donut-legend-dot"
+                                style="
+                                    background:${donutColors[index]};
+                                    width:10px;
+                                    height:10px;
+                                    border-radius:3px;
+                                ">
+                            </div>
+
+                            <span style="
+                                color:var(--text-muted);
+                                font-size:13px;
+                            ">
+                                ${label}
+                            </span>
+
+                        </div>
+
+
+                        <span style="
+                            color:var(--text-primary);
+                            font-weight:600;
+                            font-size:13px;
+                        ">
+
+                            ${donutData[index]}
+
+                            <span style="
+                                color:var(--text-muted);
+                                font-weight:400;
+                            ">
+                                (${porcentaje}%)
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                `;
+
+            });
+
+        }
 
 
         /* =================================================
@@ -151,26 +675,35 @@ async function cargarDashboard() {
                     label: 'Empleado',
                     key: 'nombre_completo'
                 },
+
                 {
                     label: 'Cédula',
                     key: 'cedula'
                 },
+
                 {
                     label: 'Fecha',
                     key: 'fecha_fmt'
                 },
+
                 {
                     label: 'Entrada',
                     key: 'entrada_fmt'
                 },
+
                 {
                     label: 'Salida',
                     key: 'salida_fmt'
+                },
+
+                {
+                    label: 'Estado',
+                    key: 'estado_fmt'
                 }
             ],
 
             asistencias
-                .slice(0, 10)
+                .slice(0, 8)
                 .map(a => ({
 
                     ...a,
@@ -206,23 +739,16 @@ async function cargarDashboard() {
                                         minute: '2-digit'
                                     }
                                 )
-                            : '–'
+                            : '–',
+
+                    estado_fmt:
+                        a.hora_salida
+                            ? '<span class="badge badge-green">Completo</span>'
+                            : a.hora_entrada
+                                ? '<span class="badge badge-amber">En turno</span>'
+                                : '<span class="badge badge-red">Ausente</span>'
 
                 }))
-        );
-
-
-        /* =================================================
-           GRAFICOS
-           ================================================= */
-
-        crearGraficoAsistencia(asistencias);
-
-        crearGraficoInconsistencias(inconsistencias);
-
-        crearGraficoEstado(
-            empleados,
-            asistenciaHoy
         );
 
 
@@ -243,521 +769,6 @@ async function cargarDashboard() {
         ui.loader(false);
 
     }
-
-}
-
-
-/* =====================================================
-   GRAFICO 1
-   ASISTENCIA SEMANAL
-   ===================================================== */
-
-function crearGraficoAsistencia(asistencias) {
-
-    const canvas =
-        document.getElementById('chart-line');
-
-    if (!canvas) {
-        return;
-    }
-
-
-    /* ---------------------------------------------
-       Obtener los últimos 7 días
-       --------------------------------------------- */
-
-    const hoy = new Date();
-
-    const fechas = [];
-
-    for (let i = 6; i >= 0; i--) {
-
-        const fecha = new Date(hoy);
-
-        fecha.setHours(0, 0, 0, 0);
-
-        fecha.setDate(
-            hoy.getDate() - i
-        );
-
-        fechas.push(fecha);
-
-    }
-
-
-    /* ---------------------------------------------
-       Nombres de los días
-       --------------------------------------------- */
-
-    const labels = fechas.map(fecha => {
-
-        return fecha.toLocaleDateString(
-            'es-CR',
-            {
-                weekday: 'short'
-            }
-        ).replace('.', '');
-
-    });
-
-
-    /* ---------------------------------------------
-       Contar asistencias por día
-       --------------------------------------------- */
-
-    const datos = fechas.map(fechaObjetivo => {
-
-        return asistencias.filter(a => {
-
-            if (!a.fecha) {
-                return false;
-            }
-
-            const fecha =
-                new Date(a.fecha);
-
-            return (
-                fecha.getFullYear() ===
-                    fechaObjetivo.getFullYear() &&
-
-                fecha.getMonth() ===
-                    fechaObjetivo.getMonth() &&
-
-                fecha.getDate() ===
-                    fechaObjetivo.getDate()
-            );
-
-        }).length;
-
-    });
-
-
-    /* ---------------------------------------------
-       Destruir gráfico anterior
-       --------------------------------------------- */
-
-    if (chartLine) {
-        chartLine.destroy();
-    }
-
-
-    /* ---------------------------------------------
-       Crear gráfico
-       --------------------------------------------- */
-
-    chartLine = new Chart(
-        canvas,
-        {
-
-            type: 'line',
-
-            data: {
-
-                labels: labels,
-
-                datasets: [
-
-                    {
-                        label: 'Asistencia',
-
-                        data: datos,
-
-                        borderColor: '#6366f1',
-
-                        backgroundColor:
-                            'rgba(99, 102, 241, 0.15)',
-
-                        borderWidth: 2,
-
-                        fill: true,
-
-                        tension: 0.4,
-
-                        pointRadius: 4,
-
-                        pointHoverRadius: 6
-
-                    }
-
-                ]
-
-            },
-
-            options: {
-
-                responsive: true,
-
-                maintainAspectRatio: false,
-
-                plugins: {
-
-                    legend: {
-                        display: false
-                    }
-
-                },
-
-                scales: {
-
-                    x: {
-
-                        grid: {
-                            display: false
-                        }
-
-                    },
-
-                    y: {
-
-                        beginAtZero: true,
-
-                        ticks: {
-                            precision: 0
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   GRAFICO 2
-   INCONSISTENCIAS POR TIPO
-   ===================================================== */
-
-function crearGraficoInconsistencias(inconsistencias) {
-
-    const canvas =
-        document.getElementById('chart-bar');
-
-    if (!canvas) {
-        return;
-    }
-
-
-    /* ---------------------------------------------
-       Agrupar inconsistencias por tipo
-       --------------------------------------------- */
-
-    const tipos = {};
-
-    inconsistencias.forEach(inconsistencia => {
-
-        const tipo =
-            inconsistencia.tipo ||
-            inconsistencia.tipo_inconsistencia ||
-            inconsistencia.nombre_tipo ||
-            'Sin especificar';
-
-        if (!tipos[tipo]) {
-            tipos[tipo] = 0;
-        }
-
-        tipos[tipo]++;
-
-    });
-
-
-    const labels =
-        Object.keys(tipos);
-
-    const datos =
-        Object.values(tipos);
-
-
-    /* ---------------------------------------------
-       Si no existen datos
-       --------------------------------------------- */
-
-    if (labels.length === 0) {
-
-        labels.push('Sin inconsistencias');
-
-        datos.push(0);
-
-    }
-
-
-    /* ---------------------------------------------
-       Destruir gráfico anterior
-       --------------------------------------------- */
-
-    if (chartBar) {
-        chartBar.destroy();
-    }
-
-
-    /* ---------------------------------------------
-       Crear gráfico
-       --------------------------------------------- */
-
-    chartBar = new Chart(
-        canvas,
-        {
-
-            type: 'bar',
-
-            data: {
-
-                labels: labels,
-
-                datasets: [
-
-                    {
-                        label: 'Inconsistencias',
-
-                        data: datos,
-
-                        backgroundColor: [
-                            '#f59e0b',
-                            '#ef4444',
-                            '#8b5cf6',
-                            '#6366f1',
-                            '#14b8a6',
-                            '#ec4899'
-                        ],
-
-                        borderRadius: 6,
-
-                        borderSkipped: false
-
-                    }
-
-                ]
-
-            },
-
-            options: {
-
-                responsive: true,
-
-                maintainAspectRatio: false,
-
-                plugins: {
-
-                    legend: {
-                        display: false
-                    }
-
-                },
-
-                scales: {
-
-                    x: {
-
-                        grid: {
-                            display: false
-                        }
-
-                    },
-
-                    y: {
-
-                        beginAtZero: true,
-
-                        ticks: {
-                            precision: 0
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   GRAFICO 3
-   ESTADO DE EMPLEADOS
-   ===================================================== */
-
-function crearGraficoEstado(
-    empleados,
-    asistenciaHoy
-) {
-
-    const canvas =
-        document.getElementById('chart-donut');
-
-    if (!canvas) {
-        return;
-    }
-
-
-    /* ---------------------------------------------
-       Cantidades
-       --------------------------------------------- */
-
-    const presentes =
-        asistenciaHoy.length;
-
-
-    const total =
-        empleados.filter(e => e.activo).length;
-
-
-    const ausentes =
-        Math.max(
-            total - presentes,
-            0
-        );
-
-
-    /* ---------------------------------------------
-       Destruir gráfico anterior
-       --------------------------------------------- */
-
-    if (chartDonut) {
-        chartDonut.destroy();
-    }
-
-
-    /* ---------------------------------------------
-       Crear donut
-       --------------------------------------------- */
-
-    chartDonut = new Chart(
-        canvas,
-        {
-
-            type: 'doughnut',
-
-            data: {
-
-                labels: [
-                    'Presentes',
-                    'Ausentes'
-                ],
-
-                datasets: [
-
-                    {
-                        data: [
-                            presentes,
-                            ausentes
-                        ],
-
-                        backgroundColor: [
-                            '#22c55e',
-                            '#ef4444'
-                        ],
-
-                        borderWidth: 0,
-
-                        hoverOffset: 5
-
-                    }
-
-                ]
-
-            },
-
-            options: {
-
-                responsive: true,
-
-                maintainAspectRatio: false,
-
-                cutout: '68%',
-
-                plugins: {
-
-                    legend: {
-                        display: false
-                    }
-
-                }
-
-            }
-
-        }
-    );
-
-
-    /* ---------------------------------------------
-       Leyenda personalizada
-       --------------------------------------------- */
-
-    const legend =
-        document.getElementById('donut-legend');
-
-    if (!legend) {
-        return;
-    }
-
-
-    legend.innerHTML = `
-
-        <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            font-size:12px;
-        ">
-
-            <span>
-
-                <span style="
-                    display:inline-block;
-                    width:8px;
-                    height:8px;
-                    border-radius:50%;
-                    background:#22c55e;
-                    margin-right:7px;
-                "></span>
-
-                Presentes
-
-            </span>
-
-            <strong>
-                ${presentes}
-            </strong>
-
-        </div>
-
-
-        <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            font-size:12px;
-        ">
-
-            <span>
-
-                <span style="
-                    display:inline-block;
-                    width:8px;
-                    height:8px;
-                    border-radius:50%;
-                    background:#ef4444;
-                    margin-right:7px;
-                "></span>
-
-                Ausentes
-
-            </span>
-
-            <strong>
-                ${ausentes}
-            </strong>
-
-        </div>
-
-    `;
 
 }
 

@@ -25,8 +25,8 @@ const create = async (data) => {
   if (existente) throw new Error('Ya existe un empleado con esa cédula');
 
   // Validar username duplicado
-  const [usuarios] = await pool.query(
-    'SELECT * FROM USUARIO WHERE username = ?', [username]
+  const { rows: usuarios } = await pool.query(
+    'SELECT * FROM USUARIO WHERE username = $1', [username]
   );
   if (usuarios.length > 0) throw new Error('Ese nombre de usuario ya está en uso');
 
@@ -47,12 +47,12 @@ const create = async (data) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const [result] = await pool.query(
-    'INSERT INTO USUARIO (username, password, estado, id_rol) VALUES (?, ?, 1, ?)',
+  const { rows } = await pool.query(
+    'INSERT INTO USUARIO (username, password, estado, id_rol) VALUES ($1, $2, true, $3) RETURNING id_usuario',
     [username, hashedPassword, id_rol]
   );
 
-  const id_usuario = result.insertId;
+  const id_usuario = rows[0].id_usuario;
   const id_empleado = await empleadoRepository.create({ cedula, nombre, apellido, telefono, email, id_area, id_usuario });
 
   return await empleadoRepository.findById(id_empleado);
