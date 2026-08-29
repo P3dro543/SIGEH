@@ -194,6 +194,30 @@
         relative;
 }
 
+.navbar-profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 4px 6px 4px 4px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: inherit;
+}
+
+.navbar-profile-trigger:hover,
+.navbar-profile-trigger[aria-expanded="true"] {
+    border-color: var(--border);
+    background: #f8fafc;
+    transform: none;
+}
+
+.navbar-user-summary { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.navbar-role-row { display: flex; align-items: center; gap: 5px; }
+.navbar-status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px var(--green-bg); }
+.navbar-chevron { color: var(--text-light); font-size: 15px; line-height: 1; transition: transform .18s ease; }
+.navbar-profile-trigger[aria-expanded="true"] .navbar-chevron { transform: rotate(180deg); }
+
 
 /* =====================================================
    USERNAME
@@ -209,8 +233,10 @@
     font-weight:
         500;
 
-    text-align:
-        right;
+    max-width: 118px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
@@ -225,11 +251,7 @@
     color:
         var(--text-muted);
 
-    text-align:
-        right;
-
-    margin-top:
-        1px;
+    white-space: nowrap;
 }
 
 
@@ -294,6 +316,8 @@
         0 0 0 3px var(--indigo-glow);
 }
 
+.navbar-profile-trigger:hover .navbar-avatar { transform: translateY(-1px); box-shadow: 0 0 0 3px var(--indigo-glow); }
+
 
 /* =====================================================
    USER DROPDOWN
@@ -325,7 +349,7 @@
         8px;
 
     min-width:
-        190px;
+        260px;
 
     z-index:
         50;
@@ -372,16 +396,14 @@
    DROPDOWN USER INFO
    ===================================================== */
 
-.navbar-dropdown-info {
-    padding:
-        7px 10px 10px;
-
-    border-bottom:
-        1px solid var(--border-light);
-
-    margin-bottom:
-        6px;
-}
+.navbar-dropdown-info { padding: 12px; border-bottom: 1px solid var(--border-light); }
+.navbar-dropdown-profile { display: flex; align-items: center; gap: 10px; }
+.navbar-dropdown-avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--indigo-bg); color: var(--indigo-dark); font-size: 12px; font-weight: 700; }
+.navbar-role-badge { display: inline-flex; margin-top: 3px; padding: 2px 6px; border: 1px solid var(--indigo-border); border-radius: 999px; background: var(--indigo-bg); color: var(--indigo-dark); font-size: 10px; font-weight: 600; }
+.navbar-session-status { display: flex; align-items: center; gap: 6px; margin-top: 10px; color: var(--text-muted); font-size: 11px; }
+.navbar-dropdown-actions { padding: 6px; border-bottom: 1px solid var(--border-light); }
+.navbar-dropdown-option { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 6px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-light); font-family: inherit; font-size: 12px; text-align: left; cursor: not-allowed; }
+.navbar-dropdown-option small { color: var(--text-light); font-size: 10px; }
 
 
 /* =====================================================
@@ -442,8 +464,9 @@
     color:
         var(--red);
 
-    padding:
-        8px 10px;
+    margin: 6px;
+    width: calc(100% - 12px);
+    padding: 8px 10px;
 
     border-radius:
         var(--radius-sm);
@@ -512,10 +535,13 @@
     .navbar-link { padding: 10px 12px; }
 
     .navbar-username,
-    .navbar-rol {
+    .navbar-user-summary,
+    .navbar-chevron {
         display:
             none;
     }
+
+    .navbar-profile-trigger { padding: 3px; }
 }
 
 .navbar-menu-toggle { display: none; width: 34px; height: 34px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-md); background: #fff; }

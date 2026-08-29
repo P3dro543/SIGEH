@@ -32,15 +32,25 @@ const navbar = {
         <div class="navbar-links">${linksHTML}</div>
 
         <div class="navbar-user">
-          <div>
-            <div class="navbar-username">${usuario}</div>
-            <div class="navbar-rol">${rol}</div>
-          </div>
-          <div class="navbar-avatar" onclick="navbar.toggleDropdown()">${iniciales}</div>
+          <button class="navbar-profile-trigger" type="button" aria-label="Abrir menú de usuario" aria-expanded="false" onclick="navbar.toggleDropdown(this)">
+            <span class="navbar-avatar" aria-hidden="true">${iniciales}</span>
+            <span class="navbar-user-summary">
+              <span class="navbar-username">${usuario}</span>
+              <span class="navbar-role-row"><span class="navbar-status-dot"></span><span class="navbar-rol">${rol}</span></span>
+            </span>
+            <span class="navbar-chevron" aria-hidden="true">⌄</span>
+          </button>
           <div class="navbar-dropdown" id="navbar-dropdown">
             <div class="navbar-dropdown-info">
-              <div class="navbar-dropdown-username">${usuario}</div>
-              <div class="navbar-dropdown-rol">${rol}</div>
+              <div class="navbar-dropdown-profile">
+                <div class="navbar-dropdown-avatar">${iniciales}</div>
+                <div><div class="navbar-dropdown-username">${usuario}</div><span class="navbar-role-badge">${rol}</span></div>
+              </div>
+              <div class="navbar-session-status"><span class="navbar-status-dot"></span> Sesión activa</div>
+            </div>
+            <div class="navbar-dropdown-actions">
+              <button class="navbar-dropdown-option" type="button" disabled><span>Mi perfil</span><small>Próximamente</small></button>
+              <button class="navbar-dropdown-option" type="button" disabled><span>Cambiar contraseña</span><small>Próximamente</small></button>
             </div>
             <button class="navbar-dropdown-btn" onclick="auth.logout()">Cerrar sesión</button>
           </div>
@@ -53,15 +63,18 @@ const navbar = {
 
     document.addEventListener('click', (e) => {
       const dropdown = document.getElementById('navbar-dropdown');
-      const avatar = document.querySelector('.navbar-avatar');
-      if (dropdown && !dropdown.contains(e.target) && !avatar.contains(e.target)) {
+      const trigger = document.querySelector('.navbar-profile-trigger');
+      if (dropdown && trigger && !dropdown.contains(e.target) && !trigger.contains(e.target)) {
         dropdown.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
       }
     });
   },
 
-  toggleDropdown: () => {
-    document.getElementById('navbar-dropdown')?.classList.toggle('open');
+  toggleDropdown: (button) => {
+    const dropdown = document.getElementById('navbar-dropdown');
+    const open = dropdown?.classList.toggle('open');
+    button?.setAttribute('aria-expanded', String(open));
   },
 
   toggleMenu: (button) => {
