@@ -8,7 +8,14 @@ const headers = () => ({
 });
 
 const handleResponse = async (response) => {
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
+  const esSesionInvalida = response.status === 401 ||
+    (response.status === 403 && /token|sesión|sesion|expirado|inválido|invalido/i.test(data.error || ''));
+
+  if (esSesionInvalida) {
+    auth.sesionExpirada();
+    throw new Error('Tu sesión expiró. Redirigiendo al inicio de sesión.');
+  }
   if (!response.ok) throw new Error(data.error || 'Error en la solicitud');
   return data;
 };

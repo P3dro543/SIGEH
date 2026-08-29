@@ -25,12 +25,36 @@ const auth = {
   getRol: () => localStorage.getItem('rol'),
   getUsername: () => localStorage.getItem('username'),
 
-  isAuthenticated: () => !!localStorage.getItem('token'),
+  tokenExpirado: () => {
+    const token = auth.getToken();
+    if (!token) return true;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      return !payload.exp || payload.exp * 1000 <= Date.now();
+    } catch {
+      return true;
+    }
+  },
+
+  limpiarSesion: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('username');
+  },
+
+  isAuthenticated: () => !!auth.getToken() && !auth.tokenExpirado(),
 
   verificarAcceso: () => {
     if (!auth.isAuthenticated()) {
-      window.location.href = '/index.html';
+      auth.limpiarSesion();
+      window.location.replace('../index.html');
     }
+  },
+
+  sesionExpirada: () => {
+    auth.limpiarSesion();
+    window.location.replace('../index.html?sesion=expirada');
   },
 
   tieneRol: (...roles) => {

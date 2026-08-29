@@ -233,6 +233,11 @@
       window.location.href = 'pages/dashboard.html';
     }
 
+    if (new URLSearchParams(window.location.search).get('sesion') === 'expirada') {
+      ui.mostrarError('login-error', 'Tu sesión venció. Iniciá sesión para continuar.');
+      window.history.replaceState({}, document.title, 'index.html');
+    }
+
     async function handleLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
