@@ -110,12 +110,12 @@ const permisosModule = {
     ui.ocultarError('permiso-error');
 
     if (!id_empleado) {
-      ui.mostrarError('permiso-error', 'Seleccioná un empleado');
+      ui.mostrarError('permiso-error', 'Seleccioná un empleado', ['f-id-empleado']);
       return;
     }
 
     if (!fecha_inicio || !fecha_fin) {
-      ui.mostrarError('permiso-error', 'Las fechas son requeridas');
+      ui.mostrarError('permiso-error', 'Las fechas son requeridas', ['f-fecha-inicio', 'f-fecha-fin']);
       return;
     }
 
@@ -124,7 +124,7 @@ const permisosModule = {
     if (fecha_inicio < hoy) {
       ui.mostrarError(
         'permiso-error',
-        'No podés solicitar un permiso para una fecha pasada'
+        'No podés solicitar un permiso para una fecha pasada', ['f-fecha-inicio']
       );
       return;
     }
@@ -132,13 +132,13 @@ const permisosModule = {
     if (new Date(fecha_inicio) > new Date(fecha_fin)) {
       ui.mostrarError(
         'permiso-error',
-        'La fecha inicio no puede ser mayor a la fecha fin'
+        'La fecha inicio no puede ser mayor a la fecha fin', ['f-fecha-inicio', 'f-fecha-fin']
       );
       return;
     }
 
     if (!motivo) {
-      ui.mostrarError('permiso-error', 'El motivo es requerido');
+      ui.mostrarError('permiso-error', 'El motivo es requerido', ['f-motivo']);
       return;
     }
 

@@ -4,101 +4,262 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Asistencia – SIGEH</title>
+  <meta property="og:title" content="Asistencia | SIGEH" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
 
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
   <link rel="stylesheet" href="../css/components.css" />
 
   <!-- Tom Select -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+  <!-- =====================================================
+       ESTILOS DE PÁGINA — Asistencia
+       Solo define clases usadas en este HTML que no existen
+       en base.css / components.css / navbar.css. No redefine
+       ni sobreescribe ninguna clase ni variable existente.
+       ===================================================== -->
+  <style>
+
+    /* ENCABEZADO DE PÁGINA */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .page-header .page-title {
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* DESCRIPCIÓN DE TARJETA */
+    .card-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ESPACIO ENTRE SECCIONES */
+    .section-card {
+      margin-bottom: 1.5rem;
+    }
+
+    /* REGISTRAR MARCACIÓN */
+    .attendance-register {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .form-group-employee {
+      flex: 1;
+      min-width: 240px;
+      margin-bottom: 0;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* GRID DE FILTROS */
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .filter-action {
+      display: flex;
+    }
+
+    .filter-action .btn {
+      width: 100%;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 760px) {
+
+      .filters-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .attendance-register {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .form-actions {
+        justify-content: stretch;
+      }
+
+      .form-actions .btn {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
 </head>
+
 <body>
   <div class="layout-navbar">
+
+    <!-- NAVBAR -->
     <div id="navbar-container"></div>
 
+    <!-- CONTENIDO -->
     <main class="page-body-navbar">
-      <div style="margin-bottom:1.25rem;">
-        <h1 class="page-title">Asistencia</h1>
-      </div>
 
-      <!-- Registrar marcación -->
-      <div class="card" style="margin-bottom:1.25rem;">
+      <!-- TÍTULO -->
+      <header class="page-header">
+        <div>
+          <h1 class="page-title">Asistencia</h1>
+          <p class="page-subtitle">Registra y consulta las marcaciones de los empleados.</p>
+        </div>
+      </header>
+
+      <!-- ================================================= -->
+      <!-- REGISTRAR MARCACIÓN                                -->
+      <!-- ================================================= -->
+      <section class="card section-card">
         <div class="card-header">
-          <h2 class="card-title">Registrar marcación</h2>
+          <div>
+            <h2 class="card-title">Registrar marcación</h2>
+            <p class="card-description">Selecciona un empleado para registrar su entrada o salida.</p>
+          </div>
         </div>
-        <div class="card-body" style="display:flex;gap:12px;align-items:flex-end;">
-          <div class="form-group" style="flex:1;margin-bottom:0;">
-            <label class="form-label">Empleado</label>
-            <select id="f-id-empleado" class="form-select"></select>
+
+        <div class="card-body">
+          <div class="attendance-register">
+
+            <div class="form-group form-group-employee">
+              <label class="form-label" for="f-id-empleado">Empleado</label>
+              <select id="f-id-empleado" class="form-select"></select>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="asistenciaModule.marcarEntrada()">
+                Marcar entrada
+              </button>
+
+              <button class="btn btn-secondary" onclick="asistenciaModule.marcarSalida()">
+                Marcar salida
+              </button>
+            </div>
+
           </div>
-          <button class="btn btn-primary" onclick="asistenciaModule.marcarEntrada()">
-            Marcar entrada
-          </button>
-          <button class="btn btn-secondary" onclick="asistenciaModule.marcarSalida()">
-            Marcar salida
-          </button>
         </div>
-      </div>
+      </section>
 
-      <!-- Filtros -->
-      <div class="card" style="margin-bottom:1.25rem;">
-        <div class="card-body" style="display:flex;gap:12px;align-items:flex-end;">
-          <div class="form-group" style="flex:1;margin-bottom:0;">
-            <label class="form-label">Buscar</label>
-            <input
-              id="filtro-busqueda"
-              type="text"
-              class="form-input"
-              placeholder="Nombre, cédula..."
-              oninput="asistenciaModule.filtrar()"
-            />
-          </div>
-
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Estado</label>
-            <select
-              id="filtro-estado"
-              class="form-select"
-              onchange="asistenciaModule.filtrar()"
-            >
-              <option value="">Todos</option>
-              <option value="completo">Completo</option>
-              <option value="turno">En turno</option>
-              <option value="ausente">Ausente</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Fecha</label>
-            <input
-              id="filtro-fecha"
-              type="date"
-              class="form-input"
-              onchange="asistenciaModule.filtrar()"
-            />
-          </div>
-
-          <button class="btn btn-secondary" onclick="asistenciaModule.limpiarFiltros()">
-            Limpiar
-          </button>
-        </div>
-      </div>
-
-      <!-- Tabla -->
-      <div class="card">
+      <!-- ================================================= -->
+      <!-- FILTROS                                            -->
+      <!-- ================================================= -->
+      <section class="card section-card">
         <div class="card-header">
-          <h2 class="card-title">Registro de asistencia</h2>
+          <div>
+            <h2 class="card-title">Filtros</h2>
+            <p class="card-description">Utiliza los filtros para encontrar registros específicos.</p>
+          </div>
         </div>
-        <div id="tabla-asistencia"></div>
-      </div>
+
+        <div class="card-body">
+          <div class="filters-grid">
+
+            <!-- BUSCAR -->
+            <div class="form-group">
+              <label class="form-label" for="filtro-busqueda">Buscar</label>
+              <input
+                id="filtro-busqueda"
+                type="text"
+                class="form-input"
+                placeholder="Nombre, cédula..."
+                oninput="asistenciaModule.filtrar()"
+              />
+            </div>
+
+            <!-- ESTADO -->
+            <div class="form-group">
+              <label class="form-label" for="filtro-estado">Estado</label>
+              <select id="filtro-estado" class="form-select" onchange="asistenciaModule.filtrar()">
+                <option value="">Todos</option>
+                <option value="completo">Completo</option>
+                <option value="turno">En turno</option>
+                <option value="ausente">Ausente</option>
+              </select>
+            </div>
+
+            <!-- FECHA -->
+            <div class="form-group">
+              <label class="form-label" for="filtro-fecha">Fecha</label>
+              <input
+                id="filtro-fecha"
+                type="date"
+                class="form-input"
+                onchange="asistenciaModule.filtrar()"
+              />
+            </div>
+
+            <!-- LIMPIAR -->
+            <div class="filter-action">
+              <button class="btn btn-secondary" onclick="asistenciaModule.limpiarFiltros()">
+                Limpiar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= -->
+      <!-- TABLA                                              -->
+      <!-- ================================================= -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Registro de asistencia</h2>
+            <p class="card-description">Consulta las marcaciones registradas.</p>
+          </div>
+        </div>
+
+        <div id="tabla-asistencia" class="table-container"></div>
+      </section>
+
     </main>
   </div>
 
+  <!-- ===================================================== -->
+  <!-- JAVASCRIPT                                             -->
+  <!-- ===================================================== -->
   <script src="../js/auth.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/navbar.js"></script>
+  <script src="../js/cookie-consent.js"></script>
   <script src="../js/modules/asistencia.js"></script>
+
 </body>
 </html>

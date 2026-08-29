@@ -77,7 +77,7 @@ const coberturasModule = {
       if (sustitutos.length === 0) {
         ui.mostrarError(
           'cobertura-error',
-          'No hay sustitutos disponibles para esta inconsistencia'
+          'No hay sustitutos disponibles para esta inconsistencia', ['f-id-inconsistencia']
         );
         contenedor.style.display = 'none';
         return;
@@ -123,7 +123,7 @@ const coberturasModule = {
     if (!id_inconsistencia || !id_empleado_sustituto) {
       ui.mostrarError(
         'cobertura-error',
-        'Seleccioná una inconsistencia y un sustituto'
+        'Seleccioná una inconsistencia y un sustituto', ['f-id-inconsistencia', 'f-id-sustituto']
       );
       return;
     }

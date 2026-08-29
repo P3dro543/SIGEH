@@ -4,9 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SIGEH – VigSafe Seguridad</title>
+  <meta name="description" content="Sistema Integral de Gestión de Horarios y Asistencia de VigSafe Seguridad." />
+  <meta property="og:title" content="SIGEH | VigSafe Seguridad" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/components.css" />
+
   <style>
+
     body {
       display: flex;
       align-items: center;
@@ -20,19 +26,23 @@
       width: 100%;
       max-width: 860px;
       min-height: 520px;
-      border-radius: 20px;
+
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-hover);
+
       overflow: hidden;
-      border: 0.5px solid var(--glass-border);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(20px);
       position: relative;
       z-index: 1;
     }
 
     .login-left {
       width: 45%;
-      background: rgba(255, 255, 255, 0.04);
-      border-right: 0.5px solid var(--glass-border);
+
+      background: var(--indigo-bg);
+      border-right: 1px solid var(--border);
+
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -42,30 +52,49 @@
     }
 
     .login-shield {
-      width: 64px; height: 64px;
-      border-radius: 16px;
-      background: var(--indigo-bg);
-      border: 0.5px solid var(--indigo-border);
+      width: 64px;
+      height: 64px;
+
+      border-radius: var(--radius-lg);
+      background: #ffffff;
+      border: 1px solid var(--indigo-border);
+
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--shadow-soft);
     }
 
-    .login-brand { text-align: center; }
-    .login-brand-name { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; }
-    .login-brand-vig { color: #fff; }
-    .login-brand-safe { color: var(--indigo-light); }
+    .login-brand {
+      text-align: center;
+    }
+
+    .login-brand-name {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .login-brand-vig {
+      color: var(--text-primary);
+    }
+
+    .login-brand-safe {
+      color: var(--indigo);
+    }
+
     .login-brand-sub {
       font-size: 10px;
-      color: var(--text-muted);
+      color: var(--text-light);
       letter-spacing: 0.15em;
       margin-top: 4px;
     }
 
     .login-divider {
-      width: 36px; height: 1px;
+      width: 36px;
+      height: 1px;
       background: var(--indigo-light);
-      opacity: 0.3;
+      opacity: 0.4;
     }
 
     .login-tagline {
@@ -78,18 +107,22 @@
 
     .login-right {
       width: 55%;
-      background: rgba(255, 255, 255, 0.04);
+      background: #ffffff;
+
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 3rem 2.5rem;
     }
 
-    .login-form { width: 100%; max-width: 300px; }
+    .login-form {
+      width: 100%;
+      max-width: 300px;
+    }
 
     .login-title {
       font-size: 20px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 4px;
     }
@@ -108,14 +141,42 @@
 
     .login-footer {
       font-size: 11px;
-      color: rgba(255,255,255,0.15);
+      color: var(--text-light);
       text-align: center;
       margin-top: 2rem;
     }
+
+    /* RESPONSIVE */
+    @media (max-width: 700px) {
+
+      .login-wrapper {
+        flex-direction: column;
+        max-width: 380px;
+        min-height: 0;
+      }
+
+      .login-left,
+      .login-right {
+        width: 100%;
+      }
+
+      .login-left {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 2rem;
+      }
+
+      .login-right {
+        padding: 2rem;
+      }
+    }
+
   </style>
 </head>
+
 <body>
   <div class="login-wrapper">
+
     <div class="login-left">
       <div class="login-shield">
         <svg width="32" height="32" viewBox="0 0 80 80" fill="none">
@@ -158,13 +219,15 @@
           Ingresar al sistema
         </button>
 
-        <p class="login-footer">SIGEH v1.0 · VigSafe Seguridad S.A.</p>
+        <p class="login-footer">SIGEH v1.0 · VigSafe Seguridad S.A.<br /><a href="privacidad.html">Privacidad</a> · <a href="terminos.html">Términos</a></p>
       </div>
     </div>
+
   </div>
 
   <script src="js/auth.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/cookie-consent.js"></script>
   <script>
     if (auth.isAuthenticated()) {
       window.location.href = 'pages/dashboard.html';
@@ -175,14 +238,14 @@
       const password = document.getElementById('password').value.trim();
       ui.ocultarError('login-error');
       if (!username || !password) {
-        ui.mostrarError('login-error', 'Completá todos los campos.');
+        ui.mostrarError('login-error', 'Completá todos los campos.', ['username', 'password']);
         return;
       }
       try {
         await auth.login(username, password);
         window.location.href = 'pages/dashboard.html';
       } catch (err) {
-        ui.mostrarError('login-error', err.message);
+        ui.mostrarError('login-error', err.message, ['username', 'password']);
       }
     }
 

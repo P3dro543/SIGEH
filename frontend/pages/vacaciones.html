@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vacaciones – SIGEH</title>
+  <meta property="og:title" content="Vacaciones | SIGEH" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
 
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
@@ -19,13 +21,13 @@
 
     <main class="page-body-navbar">
 
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
-        <h1 class="page-title">Vacaciones</h1>
+      <header class="page-header">
+        <div><h1 class="page-title">Vacaciones</h1><p class="page-subtitle">Administrá las solicitudes y fechas disponibles del equipo.</p></div>
 
         <button class="btn btn-primary" onclick="vacacionesModule.abrirModal()">
           + Nueva solicitud
         </button>
-      </div>
+      </header>
 
       <!-- Filtros -->
       <div class="card" style="margin-bottom:1.25rem;">
@@ -80,9 +82,7 @@
     <div class="modal">
 
       <div class="modal-header">
-        <h3 class="modal-title">
-          Nueva solicitud de vacaciones
-        </h3>
+        <div><h3 class="modal-title">Nueva solicitud de vacaciones</h3><p class="card-description">Indicá el empleado y las fechas que desea solicitar.</p></div>
 
         <button class="modal-close" onclick="ui.cerrarModal('modal-vacacion')">
           &times;
@@ -156,6 +156,7 @@
   <script src="../js/api.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/navbar.js"></script>
+  <script src="../js/cookie-consent.js"></script>
   <script src="../js/modules/vacaciones.js"></script>
 
 </body>

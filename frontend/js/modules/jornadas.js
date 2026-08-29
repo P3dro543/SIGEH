@@ -49,7 +49,12 @@ const jornadasModule = {
   },
 
   eliminar: async (id) => {
-    if (!confirm('¿Estás seguro de eliminar esta jornada?')) return;
+    const confirmado = await ui.confirmar(
+      '¿Eliminar esta jornada?',
+      'Esta acción no se puede deshacer. Verificá que no esté asignada a ningún empleado.',
+      'Eliminar jornada'
+    );
+    if (!confirmado) return;
     try {
       await api.delete(`/jornadas/${id}`);
       ui.alerta('Jornada eliminada correctamente', 'success');

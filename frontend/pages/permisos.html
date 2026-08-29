@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Permisos – SIGEH</title>
+  <meta property="og:title" content="Permisos | SIGEH" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
 
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
@@ -17,12 +19,12 @@
     <div id="navbar-container"></div>
 
     <main class="page-body-navbar">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
-        <h1 class="page-title">Permisos</h1>
+      <header class="page-header">
+        <div><h1 class="page-title">Permisos</h1><p class="page-subtitle">Gestioná solicitudes y mantené un historial claro de aprobaciones.</p></div>
         <button class="btn btn-primary" onclick="permisosModule.abrirModal()">
           + Nuevo permiso
         </button>
-      </div>
+      </header>
 
       <!-- Filtros -->
       <div class="card" style="margin-bottom:1.25rem;">
@@ -72,7 +74,7 @@
   <div id="modal-permiso" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">
-        <h3 class="modal-title">Nuevo permiso</h3>
+        <div><h3 class="modal-title">Nuevo permiso</h3><p class="card-description">Registrá el período y motivo de la solicitud.</p></div>
         <button class="modal-close" onclick="ui.cerrarModal('modal-permiso')">&times;</button>
       </div>
 
@@ -122,6 +124,7 @@
   <script src="../js/api.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/navbar.js"></script>
+  <script src="../js/cookie-consent.js"></script>
   <script src="../js/modules/permisos.js"></script>
 </body>
 </html>

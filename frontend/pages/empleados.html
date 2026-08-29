@@ -4,104 +4,292 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Empleados – SIGEH</title>
+  <meta property="og:title" content="Empleados | SIGEH" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
   <link rel="stylesheet" href="../css/components.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css">
+
+  <!-- Tom Select -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+  <!-- =====================================================
+       ESTILOS DE PÁGINA — Empleados
+       Solo define clases usadas en este HTML que no existen
+       en base.css / components.css / navbar.css. No redefine
+       ni sobreescribe ninguna clase ni variable existente.
+       ===================================================== -->
+  <style>
+
+    /* ENCABEZADO DE PÁGINA */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .page-header .page-title {
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* DESCRIPCIÓN DE TARJETA (bajo card-title / modal-title) */
+    .card-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ESPACIO ENTRE LA TARJETA DE FILTROS Y LA TABLA */
+    .section-card {
+      margin-bottom: 1.5rem;
+    }
+
+    /* GRID DE FILTROS */
+    .employees-filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .filter-action {
+      display: flex;
+    }
+
+    .filter-action .btn {
+      width: 100%;
+    }
+
+    /* AJUSTES DE ESPACIADO EN EL FORMULARIO DEL MODAL */
+    .form-group-no-margin {
+      margin-bottom: 0;
+    }
+
+    .form-section-spacing {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-section-spacing-large {
+      margin-bottom: 1.75rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 760px) {
+
+      .employees-filters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .employees-filters {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid-2,
+      .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
 </head>
+
 <body>
   <div class="layout-navbar">
+
+    <!-- NAVBAR -->
     <div id="navbar-container"></div>
 
+    <!-- ================================================= -->
+    <!-- CONTENIDO PRINCIPAL                                -->
+    <!-- ================================================= -->
     <main class="page-body-navbar">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
-        <h1 class="page-title">Empleados</h1>
-        <button class="btn btn-primary" onclick="empleadosModule.abrirModal()">+ Nuevo empleado</button>
-      </div>
 
-      <div class="card" style="margin-bottom:1.25rem;">
-        <div class="card-body" style="display:flex;gap:12px;align-items:flex-end;">
-          <div class="form-group" style="flex:1;margin-bottom:0;">
-            <label class="form-label">Buscar</label>
-            <input id="filtro-busqueda" type="text" class="form-input"
-              placeholder="Nombre, cédula, área..." oninput="empleadosModule.filtrar()" />
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Área</label>
-            <select id="filtro-area" class="form-select" onchange="empleadosModule.filtrar()">
-              <option value="">Todas</option>
-              <option value="Vigilancia">Vigilancia</option>
-              <option value="Salud Ocupacional">Salud Ocupacional</option>
-              <option value="Planta">Planta</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Estado</label>
-            <select id="filtro-estado" class="form-select" onchange="empleadosModule.filtrar()">
-              <option value="">Todos</option>
-              <option value="activo">Activo</option>
-              <option value="inactivo">Inactivo</option>
-            </select>
-          </div>
-          <button class="btn btn-secondary" onclick="empleadosModule.limpiarFiltros()">Limpiar</button>
+      <!-- ENCABEZADO -->
+      <header class="page-header">
+        <div>
+          <h1 class="page-title">Empleados</h1>
+          <p class="page-subtitle">Administra la información y configuración de los empleados.</p>
         </div>
-      </div>
 
-      <div class="card">
-        <div id="tabla-empleados"></div>
-      </div>
+        <button class="btn btn-primary" onclick="empleadosModule.abrirModal()">
+          + Nuevo empleado
+        </button>
+      </header>
+
+      <!-- ================================================= -->
+      <!-- FILTROS                                            -->
+      <!-- ================================================= -->
+      <section class="card section-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Buscar empleados</h2>
+            <p class="card-description">Filtra los empleados por nombre, área o estado.</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="employees-filters">
+
+            <!-- BUSCAR -->
+            <div class="form-group">
+              <label class="form-label" for="filtro-busqueda">Buscar</label>
+              <input
+                id="filtro-busqueda"
+                type="text"
+                class="form-input"
+                placeholder="Nombre, cédula, área..."
+                oninput="empleadosModule.filtrar()"
+              />
+            </div>
+
+            <!-- ÁREA -->
+            <div class="form-group">
+              <label class="form-label" for="filtro-area">Área</label>
+              <select id="filtro-area" class="form-select" onchange="empleadosModule.filtrar()">
+                <option value="">Todas</option>
+                <option value="Vigilancia">Vigilancia</option>
+                <option value="Salud Ocupacional">Salud Ocupacional</option>
+                <option value="Planta">Planta</option>
+              </select>
+            </div>
+
+            <!-- ESTADO -->
+            <div class="form-group">
+              <label class="form-label" for="filtro-estado">Estado</label>
+              <select id="filtro-estado" class="form-select" onchange="empleadosModule.filtrar()">
+                <option value="">Todos</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+
+            <!-- LIMPIAR -->
+            <div class="filter-action">
+              <button class="btn btn-secondary" onclick="empleadosModule.limpiarFiltros()">
+                Limpiar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= -->
+      <!-- TABLA DE EMPLEADOS                                 -->
+      <!-- ================================================= -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Empleados registrados</h2>
+            <p class="card-description">Consulta y administra los empleados del sistema.</p>
+          </div>
+        </div>
+
+        <div id="tabla-empleados" class="table-container"></div>
+      </section>
+
     </main>
   </div>
 
-  <!-- Modal nuevo empleado -->
+  <!-- ===================================================== -->
+  <!-- MODAL — NUEVO EMPLEADO                                 -->
+  <!-- ===================================================== -->
   <div id="modal-empleado" class="modal-overlay">
     <div class="modal modal-lg">
+
+      <!-- HEADER -->
       <div class="modal-header">
-        <h3 class="modal-title">Nuevo empleado</h3>
-        <button class="modal-close" onclick="ui.cerrarModal('modal-empleado')">&times;</button>
+        <div>
+          <h3 class="modal-title">Nuevo empleado</h3>
+          <p class="card-description">Registra la información del nuevo empleado.</p>
+        </div>
+
+        <button class="modal-close" onclick="ui.cerrarModal('modal-empleado')" aria-label="Cerrar">
+          &times;
+        </button>
       </div>
+
+      <!-- BODY -->
       <div class="modal-body">
+
+        <!-- ERROR -->
         <div id="empleado-error" class="alert alert-error"></div>
 
+        <!-- ================================================= -->
+        <!-- INFORMACIÓN PERSONAL                               -->
+        <!-- ================================================= -->
         <p class="form-section-title">Información personal</p>
-        <div class="form-grid-2" style="margin-bottom:12px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Nombre</label>
+
+        <div class="form-grid-2 form-section-spacing">
+          <!-- NOMBRE -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-nombre">Nombre</label>
             <input id="f-nombre" type="text" class="form-input" placeholder="Juan" />
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Apellido</label>
+
+          <!-- APELLIDO -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-apellido">Apellido</label>
             <input id="f-apellido" type="text" class="form-input" placeholder="Pérez" />
           </div>
         </div>
-        <div class="form-grid-3" style="margin-bottom:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Cédula</label>
+
+        <div class="form-grid-3 form-section-spacing-large">
+          <!-- CÉDULA -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-cedula">Cédula</label>
             <input id="f-cedula" type="text" class="form-input" placeholder="118240000" />
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Teléfono</label>
+
+          <!-- TELÉFONO -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-telefono">Teléfono</label>
             <input id="f-telefono" type="text" class="form-input" placeholder="88001122" />
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Email</label>
+
+          <!-- EMAIL -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-email">Email</label>
             <input id="f-email" type="email" class="form-input" placeholder="correo@vigsafe.com" />
           </div>
         </div>
 
+        <!-- ================================================= -->
+        <!-- ACCESO Y ÁREA                                      -->
+        <!-- ================================================= -->
         <p class="form-section-title">Acceso y área</p>
-        <div class="form-grid-2" style="margin-bottom:12px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Área</label>
+
+        <div class="form-grid-2 form-section-spacing">
+          <!-- ÁREA -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-area">Área</label>
             <select id="f-area" class="form-select">
               <option value="1">Vigilancia</option>
               <option value="2">Salud Ocupacional</option>
               <option value="3">Planta</option>
             </select>
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Rol</label>
+
+          <!-- ROL -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-rol">Rol</label>
             <select id="f-rol" class="form-select">
               <option value="4">Empleado</option>
               <option value="3">Supervisor</option>
@@ -109,44 +297,67 @@
             </select>
           </div>
         </div>
-        <div class="form-grid-2" style="margin-bottom:16px;">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Usuario</label>
+
+        <div class="form-grid-2 form-section-spacing-large">
+          <!-- USUARIO -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-username">Usuario</label>
             <input id="f-username" type="text" class="form-input" placeholder="jperez" />
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Contraseña</label>
+
+          <!-- CONTRASEÑA -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-password">Contraseña</label>
             <input id="f-password" type="password" class="form-input" placeholder="••••••••" />
           </div>
         </div>
 
+        <!-- ================================================= -->
+        <!-- JORNADA LABORAL                                    -->
+        <!-- ================================================= -->
         <p class="form-section-title">Jornada laboral</p>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Jornada</label>
+
+        <!-- JORNADA -->
+        <div class="form-group form-section-spacing">
+          <label class="form-label" for="f-jornada">Jornada</label>
           <select id="f-jornada" class="form-select"></select>
         </div>
+
+        <!-- FECHAS -->
         <div class="form-grid-2">
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Fecha inicio</label>
+          <!-- FECHA INICIO -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-horario-inicio">Fecha inicio</label>
             <input id="f-horario-inicio" type="date" class="form-input" />
           </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Fecha fin</label>
+
+          <!-- FECHA FIN -->
+          <div class="form-group form-group-no-margin">
+            <label class="form-label" for="f-horario-fin">Fecha fin</label>
             <input id="f-horario-fin" type="date" class="form-input" />
           </div>
         </div>
+
       </div>
+
+      <!-- FOOTER -->
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="ui.cerrarModal('modal-empleado')">Cancelar</button>
         <button class="btn btn-primary" onclick="empleadosModule.guardar()">Guardar</button>
       </div>
+
     </div>
   </div>
 
+  <!-- ===================================================== -->
+  <!-- JAVASCRIPT                                             -->
+  <!-- ===================================================== -->
   <script src="../js/auth.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/navbar.js"></script>
+  <script src="../js/cookie-consent.js"></script>
   <script src="../js/modules/empleados.js"></script>
+
 </body>
 </html>

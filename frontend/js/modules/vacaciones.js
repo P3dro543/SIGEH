@@ -117,19 +117,19 @@ const vacacionesModule = {
     ui.ocultarError('vacacion-error');
 
     if (!id_empleado) {
-      ui.mostrarError('vacacion-error', 'Seleccioná un empleado');
+      ui.mostrarError('vacacion-error', 'Seleccioná un empleado', ['f-id-empleado']);
       return;
     }
 
     if (!fecha_inicio || !fecha_fin) {
-      ui.mostrarError('vacacion-error', 'Las fechas son requeridas');
+      ui.mostrarError('vacacion-error', 'Las fechas son requeridas', ['f-fecha-inicio', 'f-fecha-fin']);
       return;
     }
 
     if (new Date(fecha_inicio) > new Date(fecha_fin)) {
       ui.mostrarError(
         'vacacion-error',
-        'La fecha inicio no puede ser mayor a la fecha fin'
+        'La fecha inicio no puede ser mayor a la fecha fin', ['f-fecha-inicio', 'f-fecha-fin']
       );
       return;
     }
@@ -139,7 +139,7 @@ const vacacionesModule = {
     if (fecha_inicio <= hoy) {
       ui.mostrarError(
         'vacacion-error',
-        'No podés solicitar vacaciones para hoy o una fecha pasada'
+        'No podés solicitar vacaciones para hoy o una fecha pasada', ['f-fecha-inicio']
       );
       return;
     }

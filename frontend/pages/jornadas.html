@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jornadas – SIGEH</title>
+  <meta property="og:title" content="Jornadas | SIGEH" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
   <link rel="stylesheet" href="../css/components.css" />
@@ -13,10 +15,10 @@
     <div id="navbar-container"></div>
 
     <main class="page-body-navbar">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
-        <h1 class="page-title">Jornadas</h1>
+      <header class="page-header">
+        <div><h1 class="page-title">Jornadas</h1><p class="page-subtitle">Definí horarios de trabajo para asignarlos al personal.</p></div>
         <button class="btn btn-primary" onclick="ui.abrirModal('modal-jornada')">+ Nueva jornada</button>
-      </div>
+      </header>
 
       <div class="card">
         <div id="tabla-jornadas"></div>
@@ -28,7 +30,7 @@
   <div id="modal-jornada" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">
-        <h3 class="modal-title">Nueva jornada</h3>
+        <div><h3 class="modal-title">Nueva jornada</h3><p class="card-description">Definí el horario base que se asignará a los empleados.</p></div>
         <button class="modal-close" onclick="ui.cerrarModal('modal-jornada')">&times;</button>
       </div>
       <div class="modal-body">
@@ -63,6 +65,7 @@
   <script src="../js/api.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/navbar.js"></script>
+  <script src="../js/cookie-consent.js"></script>
   <script src="../js/modules/jornadas.js"></script>
 </body>
 </html>

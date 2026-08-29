@@ -94,24 +94,24 @@ const empleadosModule = {
     ui.ocultarError('empleado-error');
 
     if (!nombre || !apellido || !cedula || !username || !password) {
-      ui.mostrarError('empleado-error', 'Completá todos los campos obligatorios');
+      ui.mostrarError('empleado-error', 'Completá todos los campos obligatorios', ['f-nombre', 'f-apellido', 'f-cedula', 'f-username', 'f-password']);
       return;
     }
 
     if (!id_jornada) {
-      ui.mostrarError('empleado-error', 'Seleccioná una jornada');
+      ui.mostrarError('empleado-error', 'Seleccioná una jornada', ['f-jornada']);
       return;
     }
 
     if (!fecha_inicio || !fecha_fin) {
-      ui.mostrarError('empleado-error', 'Las fechas de jornada son requeridas');
+      ui.mostrarError('empleado-error', 'Las fechas de jornada son requeridas', ['f-horario-inicio', 'f-horario-fin']);
       return;
     }
 
     if (new Date(fecha_inicio) > new Date(fecha_fin)) {
       ui.mostrarError(
         'empleado-error',
-        'La fecha inicio no puede ser mayor a la fecha fin'
+        'La fecha inicio no puede ser mayor a la fecha fin', ['f-horario-inicio', 'f-horario-fin']
       );
       return;
     }

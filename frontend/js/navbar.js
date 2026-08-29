@@ -28,6 +28,7 @@ const navbar = {
           <span class="navbar-brand-vig">VIG</span><span class="navbar-brand-safe">SAFE</span>
         </a>
 
+        <button class="navbar-menu-toggle" type="button" aria-label="Abrir navegación" aria-expanded="false" onclick="navbar.toggleMenu(this)"><span></span><span></span><span></span></button>
         <div class="navbar-links">${linksHTML}</div>
 
         <div class="navbar-user">
@@ -61,5 +62,10 @@ const navbar = {
 
   toggleDropdown: () => {
     document.getElementById('navbar-dropdown')?.classList.toggle('open');
+  },
+
+  toggleMenu: (button) => {
+    const open = document.querySelector('.navbar-links')?.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(open));
   }
 };

@@ -1,0 +1,44 @@
+# Dependencias y artefactos de compilación
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+.vercel/
+
+# Variables de entorno y secretos (mantener solo las plantillas)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.keystore
+*.jks
+
+# Registros y archivos temporales
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# Sistemas operativos y editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Flutter / Android generados localmente
+app_movil/.dart_tool/
+app_movil/.packages
+app_movil/build/
+app_movil/.flutter-plugins
+app_movil/.flutter-plugins-dependencies
+app_movil/android/.gradle/
+app_movil/android/local.properties
+app_movil/android/key.properties

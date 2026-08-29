@@ -19,7 +19,6 @@ const inconsistenciaRoutes = require('./routes/inconsistenciaRoutes');
 const horarioRoutes = require('./routes/horarioRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(cors({
   origin: '*',
@@ -45,6 +44,4 @@ app.get('/', (req, res) => {
   res.json({ mensaje: 'SIGEH API corriendo correctamente' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+module.exports = app;

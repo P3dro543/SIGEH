@@ -4,95 +4,174 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Inconsistencias – SIGEH</title>
+  <meta property="og:title" content="Inconsistencias | SIGEH" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
   <link rel="stylesheet" href="../css/components.css" />
+
+  <!-- =====================================================
+       ESTILOS DE PÁGINA — Inconsistencias
+       Solo define clases usadas en este HTML que no existen
+       en base.css / components.css / navbar.css. No redefine
+       ni sobreescribe ninguna clase ni variable existente.
+       ===================================================== -->
+  <style>
+
+    /* ENCABEZADO DE PÁGINA */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ESPACIO ENTRE SECCIONES */
+    .section-card {
+      margin-bottom: 1.5rem;
+    }
+
+    /* GRID DE FILTROS */
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .filter-action {
+      display: flex;
+    }
+
+    .filter-action .btn {
+      width: 100%;
+    }
+
+    /* TEXTAREA CON RESIZE VERTICAL (evita el inline style) */
+    textarea.form-input {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+
+      .filters-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
 </head>
+
 <body>
   <div class="layout-navbar">
     <div id="navbar-container"></div>
 
     <main class="page-body-navbar">
-      <div style="margin-bottom:1.25rem;">
-        <h1 class="page-title">Inconsistencias</h1>
-      </div>
 
-      <!-- Filtros -->
-      <div class="card" style="margin-bottom:1.25rem;">
-        <div class="card-body" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-          <div class="form-group" style="flex:2;margin-bottom:0;">
-            <label class="form-label">Buscar</label>
-            <input
-              id="filtro-busqueda"
-              type="text"
-              class="form-input"
-              placeholder="Nombre, cédula, área..."
-              oninput="inconsistenciasModule.filtrar()"
-            />
-          </div>
-
-          <div class="form-group" style="flex:1;margin-bottom:0;">
-            <label class="form-label">Tipo</label>
-            <select
-              id="f-tipo"
-              class="form-select"
-              onchange="inconsistenciasModule.filtrar()"
-            >
-              <option value="">Todos</option>
-              <option value="tardanza">Tardanza</option>
-              <option value="ausencia">Ausencia</option>
-              <option value="salida_anticipada">Salida anticipada</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="flex:1;margin-bottom:0;">
-            <label class="form-label">Estado</label>
-            <select
-              id="f-estado"
-              class="form-select"
-              onchange="inconsistenciasModule.filtrar()"
-            >
-              <option value="">Todos</option>
-              <option value="pendiente">Pendiente</option>
-              <option value="justificada">Justificada</option>
-              <option value="cubierta">Cubierta</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">Fecha</label>
-            <input
-              id="filtro-fecha"
-              type="date"
-              class="form-input"
-              onchange="inconsistenciasModule.filtrar()"
-            />
-          </div>
-
-          <button
-            class="btn btn-secondary"
-            onclick="inconsistenciasModule.limpiarFiltros()"
-          >
-            Limpiar
-          </button>
+      <!-- TÍTULO -->
+      <header class="page-header">
+        <div>
+          <h1 class="page-title">Inconsistencias</h1>
+          <p class="page-subtitle">Revisá, filtrá y resolvé las incidencias de asistencia pendientes.</p>
         </div>
-      </div>
+      </header>
 
-      <!-- Tabla -->
-      <div class="card">
+      <!-- ================================================= -->
+      <!-- FILTROS                                            -->
+      <!-- ================================================= -->
+      <section class="card section-card">
+        <div class="card-body">
+          <div class="filters-grid">
+
+            <!-- BUSCAR -->
+            <div class="form-group form-group-no-margin">
+              <label class="form-label">Buscar</label>
+              <input
+                id="filtro-busqueda"
+                type="text"
+                class="form-input"
+                placeholder="Nombre, cédula, área..."
+                oninput="inconsistenciasModule.filtrar()"
+              />
+            </div>
+
+            <!-- TIPO -->
+            <div class="form-group form-group-no-margin">
+              <label class="form-label">Tipo</label>
+              <select id="f-tipo" class="form-select" onchange="inconsistenciasModule.filtrar()">
+                <option value="">Todos</option>
+                <option value="tardanza">Tardanza</option>
+                <option value="ausencia">Ausencia</option>
+                <option value="salida_anticipada">Salida anticipada</option>
+              </select>
+            </div>
+
+            <!-- ESTADO -->
+            <div class="form-group form-group-no-margin">
+              <label class="form-label">Estado</label>
+              <select id="f-estado" class="form-select" onchange="inconsistenciasModule.filtrar()">
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="justificada">Justificada</option>
+                <option value="cubierta">Cubierta</option>
+              </select>
+            </div>
+
+            <!-- FECHA -->
+            <div class="form-group form-group-no-margin">
+              <label class="form-label">Fecha</label>
+              <input
+                id="filtro-fecha"
+                type="date"
+                class="form-input"
+                onchange="inconsistenciasModule.filtrar()"
+              />
+            </div>
+
+            <!-- LIMPIAR -->
+            <div class="filter-action">
+              <button class="btn btn-secondary" onclick="inconsistenciasModule.limpiarFiltros()">
+                Limpiar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================= -->
+      <!-- TABLA                                              -->
+      <!-- ================================================= -->
+      <section class="card">
         <div class="card-header">
           <h2 class="card-title">Registro de inconsistencias</h2>
         </div>
-        <div id="tabla-inconsistencias"></div>
-      </div>
+
+        <div id="tabla-inconsistencias" class="table-container"></div>
+      </section>
+
     </main>
   </div>
 
-  <!-- Modal justificación -->
+  <!-- ===================================================== -->
+  <!-- MODAL — JUSTIFICACIÓN                                  -->
+  <!-- ===================================================== -->
   <div id="modal-justificacion" class="modal-overlay">
     <div class="modal">
+
       <div class="modal-header">
-        <h3 class="modal-title">Registrar justificación</h3>
+        <div><h3 class="modal-title">Registrar justificación</h3><p class="card-description">Dejá una explicación clara para respaldar la incidencia.</p></div>
         <button class="modal-close" onclick="ui.cerrarModal('modal-justificacion')">&times;</button>
       </div>
 
@@ -108,7 +187,6 @@
             class="form-input"
             rows="4"
             placeholder="Describí el motivo de la inconsistencia..."
-            style="resize:vertical;"
           ></textarea>
         </div>
       </div>
@@ -121,6 +199,7 @@
           Guardar
         </button>
       </div>
+
     </div>
   </div>
 
@@ -128,6 +207,7 @@
   <script src="../js/api.js"></script>
   <script src="../js/ui.js"></script>
   <script src="../js/navbar.js"></script>
+  <script src="../js/cookie-consent.js"></script>
   <script src="../js/modules/inconsistencias.js"></script>
 </body>
 </html>

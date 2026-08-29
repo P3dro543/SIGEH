@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Dashboard – SIGEH</title>
+  <meta property="og:title" content="Dashboard | SIGEH" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
 
-  <!-- Estilos principales -->
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/navbar.css" />
   <link rel="stylesheet" href="../css/components.css" />
@@ -16,9 +15,33 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    /* ================================
-       GRÁFICOS
-       ================================ */
+
+    /* =====================================================
+       ENCABEZADO DE PÁGINA
+       (no definido en base.css / components.css)
+       ===================================================== */
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .page-header .page-title {
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+
+    /* =====================================================
+       DASHBOARD — GRÁFICOS
+       ===================================================== */
 
     .charts-grid {
       display: grid;
@@ -37,13 +60,15 @@
       grid-column: span 2;
     }
 
-    /* ================================
-       ICONOS DE MÉTRICAS
-       ================================ */
+
+    /* =====================================================
+       DASHBOARD — MÉTRICAS
+       ===================================================== */
 
     .metric-icon {
       width: 36px;
       height: 36px;
+
       border-radius: 10px;
 
       display: flex;
@@ -53,31 +78,73 @@
       margin-bottom: 10px;
 
       font-size: 16px;
+
+      background: #f1f5f9;
+      color: var(--text-primary);
     }
 
     .m-indigo .metric-icon {
-      background: rgba(79, 70, 229, 0.2);
-      color: #818cf8;
+      background: var(--indigo-bg);
+      color: var(--indigo);
     }
 
     .m-green .metric-icon {
-      background: rgba(52, 211, 153, 0.15);
-      color: #34d399;
+      background: #ecfdf5;
+      color: #059669;
     }
 
     .m-amber .metric-icon {
-      background: rgba(251, 191, 36, 0.15);
-      color: #fbbf24;
+      background: #fffbeb;
+      color: #d97706;
     }
 
     .m-red .metric-icon {
-      background: rgba(248, 113, 113, 0.15);
-      color: #f87171;
+      background: var(--red-bg);
+      color: var(--red);
     }
 
-    /* ================================
-       LEYENDA DEL GRÁFICO DONUT
-       ================================ */
+
+    /* =====================================================
+       DASHBOARD — INFORMACIÓN SECUNDARIA
+       ===================================================== */
+
+    .dashboard-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+
+    /* =====================================================
+       DASHBOARD — CONTENEDOR DE GRÁFICO
+       ===================================================== */
+
+    .chart-container {
+      position: relative;
+      height: 180px;
+    }
+
+
+    /* =====================================================
+       DASHBOARD — DONUT
+       ===================================================== */
+
+    .donut-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+    }
+
+    .donut-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+
+    /* =====================================================
+       DASHBOARD — LEYENDA
+       ===================================================== */
 
     .donut-legend {
       display: flex;
@@ -90,7 +157,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-
       font-size: 11px;
     }
 
@@ -101,11 +167,13 @@
       flex-shrink: 0;
     }
 
-    /* ================================
+
+    /* =====================================================
        RESPONSIVE
-       ================================ */
+       ===================================================== */
 
     @media (max-width: 900px) {
+
       .charts-grid {
         grid-template-columns: 1fr;
       }
@@ -120,314 +188,176 @@
     }
 
     @media (max-width: 600px) {
+
       .metrics-grid {
         grid-template-columns: 1fr 1fr;
       }
+
+      .page-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
+
+    @media (max-width: 450px) {
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 
 <body>
-
   <div class="layout-navbar">
 
-    <!-- ================================
-         NAVBAR
-         ================================ -->
-
+    <!-- NAVBAR -->
     <div id="navbar-container"></div>
 
-
-    <!-- ================================
-         CONTENIDO PRINCIPAL
-         ================================ -->
-
+    <!-- ================================================= -->
+    <!-- CONTENIDO PRINCIPAL                                -->
+    <!-- ================================================= -->
     <main class="page-body-navbar">
 
+      <!-- ENCABEZADO -->
+      <header class="page-header">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Resumen general de la gestión de empleados y asistencia.</p>
+        </div>
+      </header>
 
-      <!-- ================================
-           MÉTRICAS
-           ================================ -->
-
+      <!-- ================================================= -->
+      <!-- MÉTRICAS                                           -->
+      <!-- ================================================= -->
       <div class="metrics-grid">
 
-        <!-- Empleados -->
-        <div class="metric-card metric-blue m-indigo">
+        <!-- EMPLEADOS -->
+        <a class="metric-card metric-blue m-indigo metric-card-link" href="empleados.html" aria-label="Ver empleados activos">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="3"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 21v-2a6 6 0 0 0-3-5.2"/></svg></div>
+          <p class="metric-label">Empleados activos</p>
+          <p id="total-empleados" class="metric-value">–</p>
+          <p class="metric-sub">Total registrados</p>
+        </a>
 
-          <div class="metric-icon">
-            👥
-          </div>
-
-          <p class="metric-label">
-            Empleados activos
-          </p>
-
-          <p id="total-empleados" class="metric-value">
-            –
-          </p>
-
-          <p class="metric-sub">
-            Total registrados
-          </p>
-
-        </div>
-
-
-        <!-- Asistencia -->
-        <div class="metric-card metric-green m-green">
-
-          <div class="metric-icon">
-            ✓
-          </div>
-
-          <p class="metric-label">
-            Asistencia hoy
-          </p>
-
-          <p id="asistencia-hoy" class="metric-value">
-            –
-          </p>
-
-          <p class="metric-sub">
-            En turno ahora
-          </p>
-
-        </div>
-
-
-        <!-- Inconsistencias -->
-        <div class="metric-card metric-amber m-amber">
-
-          <div class="metric-icon">
-            ⚠
-          </div>
-
-          <p class="metric-label">
-            Inconsistencias
-          </p>
-
-          <p id="inconsistencias" class="metric-value">
-            –
-          </p>
-
-          <p class="metric-sub">
-            Pendientes
-          </p>
-
-        </div>
-
-
-        <!-- Permisos -->
-        <div class="metric-card metric-red m-red">
-
-          <div class="metric-icon">
-            📋
-          </div>
-
-          <p class="metric-label">
-            Permisos
-          </p>
-
-          <p id="permisos" class="metric-value">
-            –
-          </p>
-
-          <p class="metric-sub">
-            Este mes
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <!-- ================================
-           GRÁFICOS
-           ================================ -->
-
-      <div class="charts-grid">
-
-
-        <!-- ASISTENCIA SEMANAL -->
-
-        <div class="card">
-
-          <div class="card-header">
-
-            <h2 class="card-title">
-              Asistencia semanal
-            </h2>
-
-            <span style="font-size:11px;color:var(--text-muted);">
-              Últimos 7 días
-            </span>
-
-          </div>
-
-          <div class="card-body">
-
-            <div style="position:relative;height:180px;">
-
-              <canvas
-                id="chart-line"
-                role="img"
-                aria-label="Asistencia por día">
-              </canvas>
-
-            </div>
-
-          </div>
-
-        </div>
-
+        <!-- ASISTENCIA -->
+        <a class="metric-card metric-green m-green metric-card-link" href="asistencia.html" aria-label="Ver asistencia de hoy">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg></div>
+          <p class="metric-label">Asistencia hoy</p>
+          <p id="asistencia-hoy" class="metric-value">–</p>
+          <p class="metric-sub">En turno ahora</p>
+        </a>
 
         <!-- INCONSISTENCIAS -->
+        <a class="metric-card metric-amber m-amber metric-card-link" href="inconsistencias.html" aria-label="Ver inconsistencias pendientes">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+          <p class="metric-label">Inconsistencias</p>
+          <p id="inconsistencias" class="metric-value">–</p>
+          <p class="metric-sub">Pendientes</p>
+        </a>
 
-        <div class="card">
-
-          <div class="card-header">
-
-            <h2 class="card-title">
-              Inconsistencias por tipo
-            </h2>
-
-            <span style="font-size:11px;color:var(--text-muted);">
-              Mes actual
-            </span>
-
-          </div>
-
-          <div class="card-body">
-
-            <div style="position:relative;height:180px;">
-
-              <canvas
-                id="chart-bar"
-                role="img"
-                aria-label="Inconsistencias por tipo">
-              </canvas>
-
-            </div>
-
-          </div>
-
-        </div>
+        <!-- PERMISOS -->
+        <a class="metric-card metric-red m-red metric-card-link" href="permisos.html" aria-label="Ver permisos del mes">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h4"/></svg></div>
+          <p class="metric-label">Permisos</p>
+          <p id="permisos" class="metric-value">–</p>
+          <p class="metric-sub">Este mes</p>
+        </a>
 
       </div>
 
+      <!-- ================================================= -->
+      <!-- GRÁFICOS                                           -->
+      <!-- ================================================= -->
+      <div class="charts-grid">
 
-      <!-- ================================
-           TABLA + ESTADO
-           ================================ -->
+        <!-- ASISTENCIA SEMANAL -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Asistencia semanal</h2>
+            </div>
+            <span class="dashboard-meta">Últimos 7 días</span>
+          </div>
 
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="chart-line" role="img" aria-label="Asistencia por día"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- INCONSISTENCIAS -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Inconsistencias por tipo</h2>
+            </div>
+            <span class="dashboard-meta">Mes actual</span>
+          </div>
+
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="chart-bar" role="img" aria-label="Inconsistencias por tipo"></canvas>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ================================================= -->
+      <!-- ASISTENCIA + ESTADO                                -->
+      <!-- ================================================= -->
       <div class="bottom-grid">
 
-
-        <!-- ================================
-             ASISTENCIA RECIENTE
-             ================================ -->
-
-        <div class="card span-2">
-
+        <!-- ASISTENCIA RECIENTE -->
+        <section class="card span-2">
           <div class="card-header">
-
-            <h2 class="card-title">
-              Asistencia reciente
-            </h2>
-
-            <span
-              id="fecha-hoy"
-              style="font-size:11px;color:var(--text-muted);">
-            </span>
-
+            <div>
+              <h2 class="card-title">Asistencia reciente</h2>
+            </div>
+            <span id="fecha-hoy" class="dashboard-meta"></span>
           </div>
 
-          <div id="tabla-asistencia"></div>
+          <div id="tabla-asistencia" class="table-container"></div>
+        </section>
 
-        </div>
-
-
-        <!-- ================================
-             ESTADO DE EMPLEADOS
-             ================================ -->
-
-        <div class="card">
-
+        <!-- ESTADO DE EMPLEADOS -->
+        <section class="card">
           <div class="card-header">
-
-            <h2 class="card-title">
-              Estado hoy
-            </h2>
-
+            <h2 class="card-title">Estado hoy</h2>
           </div>
 
+          <div class="card-body">
+            <div class="donut-section">
 
-          <div
-            class="card-body"
-            style="
-              display:flex;
-              flex-direction:column;
-              align-items:center;
-              gap:16px;
-            "
-          >
+              <!-- DONUT -->
+              <div class="donut-container">
+                <canvas id="chart-donut" role="img" aria-label="Estado empleados hoy"></canvas>
+              </div>
 
-            <!-- DONUT -->
-
-            <div
-              style="
-                position:relative;
-                height:140px;
-                width:140px;
-              "
-            >
-
-              <canvas
-                id="chart-donut"
-                role="img"
-                aria-label="Estado empleados hoy">
-              </canvas>
+              <!-- LEYENDA -->
+              <div class="donut-legend" id="donut-legend"></div>
 
             </div>
-
-
-            <!-- LEYENDA -->
-
-            <div
-              class="donut-legend"
-              id="donut-legend">
-            </div>
-
           </div>
-
-        </div>
+        </section>
 
       </div>
 
     </main>
-
   </div>
 
-
-  <!-- ================================
-       JAVASCRIPT
-       ================================ -->
-
-  <!-- Autenticación -->
+  <!-- ===================================================== -->
+  <!-- JAVASCRIPT                                             -->
+  <!-- ===================================================== -->
   <script src="../js/auth.js"></script>
-
-  <!-- API -->
   <script src="../js/api.js"></script>
-
-  <!-- UI -->
   <script src="../js/ui.js"></script>
-
-  <!-- Navbar -->
   <script src="../js/navbar.js"></script>
-
-  <!-- Dashboard -->
+  <script src="../js/cookie-consent.js"></script>
   <script src="../js/modules/dashboard.js"></script>
 
 </body>
 </html>
-```

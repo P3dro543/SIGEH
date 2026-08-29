@@ -123,7 +123,7 @@ const inconsistenciasModule = {
     const descripcion = document.getElementById('f-descripcion').value.trim();
 
     if (!descripcion) {
-      ui.mostrarError('justificacion-error', 'La descripción es requerida');
+      ui.mostrarError('justificacion-error', 'La descripción es requerida', ['f-descripcion']);
       return;
     }
 

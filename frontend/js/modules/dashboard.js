@@ -1,8 +1,8 @@
 auth.verificarAcceso();
 navbar.render('dashboard.html');
 
-const gridColor = 'rgba(255,255,255,0.05)';
-const tickColor = 'rgba(255,255,255,0.4)';
+const gridColor = 'rgba(148, 163, 184, 0.22)';
+const tickColor = '#64748b';
 
 let chartLine, chartBar, chartDonut;
 
