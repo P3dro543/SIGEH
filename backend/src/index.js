@@ -17,6 +17,8 @@ const reporteRoutes = require('./routes/reporteRoutes');
 const vacacionRoutes = require('./routes/vacacionRoutes');
 const inconsistenciaRoutes = require('./routes/inconsistenciaRoutes');
 const horarioRoutes = require('./routes/horarioRoutes');
+const auditoriaRoutes = require('./routes/auditoriaRoutes');
+const { iniciarJobAusencias } = require('./jobs/ausenciasJob');
 
 const app = express();
 
@@ -39,6 +41,9 @@ app.use('/api/reportes', reporteRoutes);
 app.use('/api/vacaciones', vacacionRoutes);
 app.use('/api/inconsistencias', inconsistenciaRoutes);
 app.use('/api/horarios', horarioRoutes);
+app.use('/api/auditoria', auditoriaRoutes);
+
+iniciarJobAusencias();
 
 app.get('/', (req, res) => {
   res.json({ mensaje: 'SIGEH API corriendo correctamente' });

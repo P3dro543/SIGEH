@@ -38,7 +38,7 @@ const create = async (req, res) => {
 
 const aprobar = async (req, res) => {
   try {
-    const vacacion = await vacacionService.aprobar(req.params.id);
+    const vacacion = await vacacionService.aprobar(req.params.id, req.usuario.id);
     res.json(vacacion);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -47,7 +47,7 @@ const aprobar = async (req, res) => {
 
 const rechazar = async (req, res) => {
   try {
-    const vacacion = await vacacionService.rechazar(req.params.id);
+    const vacacion = await vacacionService.rechazar(req.params.id, req.usuario.id);
     res.json(vacacion);
   } catch (err) {
     res.status(400).json({ error: err.message });

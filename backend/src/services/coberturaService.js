@@ -1,5 +1,6 @@
 const coberturaRepository = require('../repositories/coberturaRepository');
 const pool = require('../config/db');
+const auditoriaService = require('./auditoriaService');
 
 const getAll = async () => {
   return await coberturaRepository.findAll();
@@ -59,7 +60,7 @@ const buscarSustitutos = async (id_inconsistencia) => {
   return sustitutos;
 };
 
-const asignarCobertura = async (data) => {
+const asignarCobertura = async (data, idUsuario) => {
   const { id_inconsistencia, id_empleado_sustituto } = data;
 
   if (!id_inconsistencia || !id_empleado_sustituto) {
@@ -83,12 +84,15 @@ const asignarCobertura = async (data) => {
     [id_inconsistencia]
   );
 
+  await auditoriaService.registrar({ entidad: 'cobertura', idEntidad: id, accion: 'asignada', idUsuario, descripcion: `Cobertura asignada a ${sustitutoValido.nombre} ${sustitutoValido.apellido}.`, datos: { id_inconsistencia, id_empleado_sustituto } });
+
   return await coberturaRepository.findById(id);
 };
 
-const confirmar = async (id) => {
-  await getById(id);
+const confirmar = async (id, idUsuario) => {
+  const cobertura = await getById(id);
   await coberturaRepository.updateEstado(id, 'confirmada');
+  await auditoriaService.registrar({ entidad: 'cobertura', idEntidad: id, accion: 'confirmada', idUsuario, descripcion: `Cobertura confirmada para ${cobertura.sustituto_nombre} ${cobertura.sustituto_apellido}.`, datos: { estado_anterior: cobertura.estado, estado_nuevo: 'confirmada' } });
   return await coberturaRepository.findById(id);
 };
 

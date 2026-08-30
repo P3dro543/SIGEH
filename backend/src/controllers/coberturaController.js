@@ -29,7 +29,7 @@ const buscarSustitutos = async (req, res) => {
 
 const asignarCobertura = async (req, res) => {
   try {
-    const cobertura = await coberturaService.asignarCobertura(req.body);
+    const cobertura = await coberturaService.asignarCobertura(req.body, req.usuario.id);
     res.status(201).json(cobertura);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -38,7 +38,7 @@ const asignarCobertura = async (req, res) => {
 
 const confirmar = async (req, res) => {
   try {
-    const cobertura = await coberturaService.confirmar(req.params.id);
+    const cobertura = await coberturaService.confirmar(req.params.id, req.usuario.id);
     res.json(cobertura);
   } catch (err) {
     res.status(400).json({ error: err.message });

@@ -1,6 +1,7 @@
 const vacacionRepository = require('../repositories/vacacionRepository');
 const empleadoRepository = require('../repositories/empleadoRepository');
 const pool = require('../config/db');
+const auditoriaService = require('./auditoriaService');
 
 const getAll = async () => {
   return await vacacionRepository.findAll();
@@ -71,15 +72,17 @@ const create = async (data) => {
   return await vacacionRepository.findById(id);
 };
 
-const aprobar = async (id) => {
-  await getById(id);
+const aprobar = async (id, idUsuario) => {
+  const vacacion = await getById(id);
   await vacacionRepository.updateEstado(id, 'aprobada');
+  await auditoriaService.registrar({ entidad: 'vacacion', idEntidad: id, accion: 'aprobada', idUsuario, descripcion: `Vacaciones aprobadas para ${vacacion.nombre} ${vacacion.apellido}.`, datos: { estado_anterior: vacacion.estado, estado_nuevo: 'aprobada' } });
   return await vacacionRepository.findById(id);
 };
 
-const rechazar = async (id) => {
-  await getById(id);
+const rechazar = async (id, idUsuario) => {
+  const vacacion = await getById(id);
   await vacacionRepository.updateEstado(id, 'rechazada');
+  await auditoriaService.registrar({ entidad: 'vacacion', idEntidad: id, accion: 'rechazada', idUsuario, descripcion: `Vacaciones rechazadas para ${vacacion.nombre} ${vacacion.apellido}.`, datos: { estado_anterior: vacacion.estado, estado_nuevo: 'rechazada' } });
   return await vacacionRepository.findById(id);
 };
 

@@ -1,6 +1,7 @@
 const permisoRepository = require('../repositories/permisoRepository');
 const empleadoRepository = require('../repositories/empleadoRepository');
 const pool = require('../config/db');
+const auditoriaService = require('./auditoriaService');
 
 const getAll = async () => {
   return await permisoRepository.findAll();
@@ -71,15 +72,17 @@ const create = async (data) => {
   return await permisoRepository.findById(id);
 };;
 
-const aprobar = async (id) => {
-  await getById(id);
+const aprobar = async (id, idUsuario) => {
+  const permiso = await getById(id);
   await permisoRepository.updateEstado(id, 'aprobado');
+  await auditoriaService.registrar({ entidad: 'permiso', idEntidad: id, accion: 'aprobado', idUsuario, descripcion: `Permiso aprobado para ${permiso.nombre} ${permiso.apellido}.`, datos: { estado_anterior: permiso.estado, estado_nuevo: 'aprobado' } });
   return await permisoRepository.findById(id);
 };
 
-const rechazar = async (id) => {
-  await getById(id);
+const rechazar = async (id, idUsuario) => {
+  const permiso = await getById(id);
   await permisoRepository.updateEstado(id, 'rechazado');
+  await auditoriaService.registrar({ entidad: 'permiso', idEntidad: id, accion: 'rechazado', idUsuario, descripcion: `Permiso rechazado para ${permiso.nombre} ${permiso.apellido}.`, datos: { estado_anterior: permiso.estado, estado_nuevo: 'rechazado' } });
   return await permisoRepository.findById(id);
 };
 
